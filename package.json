@@ -1,9 +1,12 @@
 {
   "name": "patchinko",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Concise monkey-patching utility",
   "main": "index.js",
   "repository": "git@github.com:barneycarroll/patchinko.git",
   "author": "Barney Carroll <barney.carroll@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "ospec": "^1.3.1"
+  }
 }
