@@ -1,8 +1,8 @@
 # Patchinko
 
-A tool for making deep & subtle mutations on Javascript structures. State updates, monkey-patching, and more are a breeze with Patchinko.
+A tool for making deep & subtle mutations on Javascript structures. State updates, [monkey-patching](https://en.wikipedia.org/wiki/Monkey_patch), and more are a breeze with Patchinko.
 
-Through your rose-tinted lenses, reducers & decorators out the window: Patchinko is an ECMAScript3-compliant utility that makes complex patching fast and easy, without the ceremony.
+Throw your rose-tinted [lenses](https://medium.com/javascript-inside/an-introduction-into-lenses-in-javascript-e494948d1ea5), [reducers](http://redux.js.org/docs/basics/Reducers.html) & [decorators](https://tc39.github.io/proposal-decorators/) out the window: Patchinko is an ECMAScript3-compliant utility that makes complex patching fast and easy, without the ceremony.
 
 # What
 
@@ -21,7 +21,7 @@ If any target properties are instances of `scope(function)`, it will supply the 
 The kitchen sink example:
 
 ```js
-import {patch as p, scope as s, ps} from 'patchinko'
+const {patch : p, scope : s, ps} = require('patchinko')
 
 // Some arbitrary structure
 const thing = {
@@ -72,10 +72,21 @@ p(thing, {
   })
 })
 ```
+Observe that:
 
-* Thing is mutated in place.
+* `thing` is mutated in place.
 * Properties unspecified in the patch input are unaffected
-* Fibonacci can safely be decorated (again, the rest of utils is unaffected)
+* `utils.fibonacci` can safely be decorated (again, the rest of `utils` is unaffected)
 * `stupidly.deep.structure` can be modified, keeping its identity
 
-`stupidly.deep.structure` is an example of
+`stupidly.deep.stucture` & `utils.fibonacci` show that any kind of structure can be modified or replaced at any kind of depth: `patch` is geared towards towards the common case of objects, but `scope` can deal with any type in whatever way necessary. You get closures for free so gnarly patch logic can be isolated at the point where it makes the most sense.
+
+# Why
+
+Patchinko was originally written to help monkey-patch an incredibly unwieldy piece of legacy code written in abject-oriented style - [CKEDITOR](https://docs.ckeditor.com/#!/api) to be precise. The code in question consisted of large, obtuse and inflexible configurations and interlinked method references, which was difficult enough to interpret in the first place. By using Patchinko, the necessarily cumbersome patch ressembles the structure it seeks to patch with minimum ceremony, freeing up head space to consider the intricacies of the problem API rather than the mundane difficulty of patching correctly in the first place.
+
+# But
+
+Monkey-patching is a recondite use case. Most applications of siginificant complexity will at some point face difficulties in state management. People argue the toss about the merits of mutability, different communication patterns, etc - in my opinion the key value of 'reducers', 'actions', 'lenses' etc is only really beneficial inasmuch as the ceremony of designing & writing such things distracts the brain from otherwise loose creativity, and limits the number of ways in which you might be tempted to interact with state, for the mundane reason that the more ways in which state can / is modified, the harder code is to reason about.
+
+Patchinko eases that burden by providing a declarative, recursive, function-oriented pattern with a simple & flexible API. Mutating state with Patchinko is safer because it provides an easy way to do so safely, without insisting on heavy-handed, exotic new concepts or obnoxious restrictions. Moreover, a Patchinko patch is isomorphic inasmuch as it resembles the object it patches - in stark contrast to reducers, actions & lenses where any given use instance has more in common with every other use instance than it does the transaction / data it represents.
