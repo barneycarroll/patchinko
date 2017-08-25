@@ -1,11 +1,12 @@
-function patch(target, input){
-  for(var key in input)
-    if(input.hasOwnProperty(key))
-      target[key] = (
-        input[key] instanceof scope
-        ? input[key].apply(target[key])
-        : input[key]
-      )
+function patch(target){
+  for(var i = 1; i < arguments.length; i++)
+    for(var key in arguments[i])
+      if(arguments[i].hasOwnProperty(key))
+        target[key] = (
+          arguments[i][key] instanceof scope
+          ? arguments[i][key].apply(target[key])
+          : arguments[i][key]
+        )
 
   return target
 }
@@ -27,4 +28,4 @@ function ps(input){
 
 try {
   module.exports = {patch: patch, scope: scope, ps: ps}
-} catch(o_O) {}
+} catch(e) {}

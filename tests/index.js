@@ -28,7 +28,7 @@ o.spec('`patch`', () => {
     o(patch({}, {}))
   })
 
-  o('is equivalent to a binary `Object.assign` in the absence of `scope`', () => {
+  o('is equivalent to `Object.assign` in the absence of `scope`', () => {
     const [factoryA, factoryB] = [
       () => ({a:'foo', b:2, d: {bar:  'z'}, f: [3, 4]}),
       () => ({a:'baz', c:3, d: {fizz: 'z'}, f: 'buzz'}),
