@@ -79,7 +79,7 @@ Observe that:
 * `utils.fibonacci` can safely be decorated (again, the rest of `utils` is unaffected)
 * `stupidly.deep.structure` can be modified, keeping its identity
 
-`stupidly.deep.stucture` & `utils.fibonacci` show that any kind of structure can be modified or replaced at any kind of depth: `patch` is geared towards towards the common case of objects, but `scope` can deal with any type in whatever way necessary. You get closures for free so gnarly patch logic can be isolated at the point where it makes the most sense.
+`stupidly.deep.stucture` & `utils.fibonacci` show that any kind of structure can be modified or replaced at any kind of depth: `patch` is geared towards the common case of objects, but `scope` can deal with any type in whatever way necessary. You get closures for free so gnarly patch logic can be isolated at the point where it makes the most sense.
 
 # Why
 
