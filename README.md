@@ -14,7 +14,7 @@ Patchinko exposes 3 functions: `patch`, `scope`, & `ps`.
 
 If any target properties are instances of `scope(function)`, it will supply the scoped function with the target property for that key, and assign the result back to the target.
 
-`ps` is a composition of `patch` & `scope`, for when you need to patch recursively.
+`ps([ target, ] input)` is a composition of `patch` & `scope`, for when you need to patch recursively. If you supply a `target`, the original value will be left untouched (useful for immutable patching).
 
 # How
 
@@ -41,7 +41,8 @@ const thing = {
   stupidly: {
     deep: {
       structure: ['lol']
-    }
+    },
+    with: ['an', 'array', 'tacked']
   }
 }
 
@@ -68,7 +69,11 @@ p(thing, {
       structure: s(structure =>
         structure.concat('roflmao') // Why not
       )
-    })
+    }),
+    with: ps(
+      [],
+      {1: 'copy'}
+    ) // ['a', 'copy', 'tacked'], the original array is left untouched
   })
 })
 ```
@@ -80,6 +85,10 @@ Observe that:
 * `stupidly.deep.structure` can be modified, keeping its identity
 
 `stupidly.deep.stucture` & `utils.fibonacci` show that any kind of structure can be modified or replaced at any kind of depth: `patch` is geared towards the common case of objects, but `scope` can deal with any type in whatever way necessary. You get closures for free so gnarly patch logic can be isolated at the point where it makes the most sense.
+
+```JS
+
+````
 
 # Why
 

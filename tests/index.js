@@ -127,4 +127,25 @@ o.spec('`ps`', () => {
 
     o(interception).equals(one)
   })
+  o('accepts a custom target', () => {
+    o(
+      patch(
+        {
+          a: [1, 2]
+        },
+        {
+          a: ps(
+            [],
+            {
+              1: 3
+            }
+          )
+        }
+      )
+    ).deepEquals(
+      {
+        a: [1, 3]
+      }
+    )
+  })
 })

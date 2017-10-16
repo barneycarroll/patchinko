@@ -20,9 +20,13 @@ function scope(closure){
   }
 }
 
-function ps(input){
-  return new scope(function(definition){
-    return patch(definition, input)
+function ps(target, input){
+  return arguments.length === 2
+  ? new scope(function(definition){
+    return patch(target, definition, input)
+  })
+  : new scope(function(definition){
+    return patch(definition, target) // `target` really is `input` in that case
   })
 }
 
