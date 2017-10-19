@@ -1,101 +1,75 @@
 # Patchinko [![Build Status](https://travis-ci.org/barneycarroll/patchinko.svg?branch=master)](https://travis-ci.org/barneycarroll/patchinko)
 
-A tool for making deep & subtle mutations on Javascript structures. State updates, [monkey-patching](https://en.wikipedia.org/wiki/Monkey_patch), and more are a breeze with Patchinko.
+Patchinko is a little utility for terse & subtle object mutation (or copying). It takes its name from *patching* (as in [monkey-patching](https://en.wikipedia.org/wiki/Monkey_patch)) & *[patchinko](https://en.wikipedia.org/wiki/Pachinko)*, a Japanese game with minimal interface that rewards attentiveness <sup>[1](#user-content-f-romanisation)<a name=s-romanisation></a></sup>.
 
-Throw your rose-tinted [lenses](https://medium.com/javascript-inside/an-introduction-into-lenses-in-javascript-e494948d1ea5), [reducers](http://redux.js.org/docs/basics/Reducers.html) & [decorators](https://tc39.github.io/proposal-decorators/) out the window: Patchinko is an ECMAScript3-compliant utility that makes complex patching fast and easy, without the ceremony.
+Patchinko doesn't aim to promote patterns for high level application programming concerns: it's a low level tool that makes object modification easier to write & read.
 
-# What
+It is written in ES3 and eschews exotic & ceremonious operations for greater clarity & confidence <sup>[2](#user-content-f-exotic)<a name=s-exotic></a></sup>.
 
-Patchinko exposes 3 functions: `patch`, `scope`, & `ps`.
+***
 
-`patch` is like `Object.assign` - given `patch(target, input1, input2, etc)`, it consumes inputs left to right and copies their properties onto the supplied target.
+# Why 
 
-*except that*
-
-If any target properties are instances of `scope(function)`, it will supply the scoped function with the target property for that key, and assign the result back to the target.
-
-`ps([ target, ] input)` is a composition of `patch` & `scope`, for when you need to patch recursively. If you supply a `target`, the original value will be left untouched (useful for immutable patching).
+Patchinko was written to overcome the frustration of modifying complex structures in written idioms that emphasise the method by which change is made over the change itself. Patchinko aims for a minimal ratio of operand to operator in application code so that you can focus on the what instead of the how.
 
 # How
 
-The kitchen sink example:
+Patchinko consists of 4 methods.
 
-```js
-const {patch : p, scope : s, ps} = require('patchinko')
+## p(target, ...patches)
 
-// Some arbitrary structure
-const thing = {
-  foo: 'bar',
+p behaves identically to Object.assign, except when properties on patch objects are of the special types listed below
 
-  fizz: 'buzz',
+## s(function scope(definition){})
 
-  utils: {
-    mean: (...set) =>
-      set.reduce((a, b) => a + b) / set.length,
+s consumes a scope function and returns a special type that, when encountered as a patch property in a p operation, will execute the scope function, supplying the property of the same key from the target as the definition argument, and replace it with the return value*.
 
-    fibonacci: function(x) {
-      return x <= 1 ? x : this.fibonacci(x - 1) + this.fibonacci(x - 2)
-    },
-  },
+## d
 
-  stupidly: {
-    deep: {
-      structure: ['lol']
-    },
-    with: ['an', 'array', 'tacked']
-  }
-}
+When encountered as a patch property in a p operation, deletes the property of the same key on the target.
 
-// A deep patch
-p(thing, {
-  foo: 'baz', // Change the value of foo
+## ps(patch)
 
-  utils: ps({ // We want to patch a level deeper
-    fibonacci: s(function closure(definition){ // Memoize fibonacci
-      var cache = {}
+When encountered as a patch property in a p operation, patches the property of the same key on the target with patch. Equivalent to `s(definition => p(definition, patch))`.
 
-      return function override(x){
-        return (
-          x in cache
-          ? cache[x]
-          : cache[x] = definition.apply(this, arguments)
-        )
-      }
-    })
-  }),
+## ps(target, ...patches)
 
-  stupidly: ps({
-    deep: ps({
-      structure: s(structure =>
-        structure.concat('roflmao') // Why not
-      )
-    }),
-    with: ps(
-      [],
-      {1: 'copy'}
-    ) // ['a', 'copy', 'tacked'], the original array is left untouched
-  })
-})
-```
-Observe that:
+As above, except the original definition is supplied to the underlying p invocation as the 2nd argument. Equivalent to `s(definition => p(target, definition, ...patches))`. Necessary for immutable deep object patch operations.
 
-* `thing` is mutated in place.
-* Properties unspecified in the patch input are unaffected
-* `utils.fibonacci` can safely be decorated (again, the rest of `utils` is unaffected)
-* `stupidly.deep.structure` can be modified, keeping its identity
+# What
 
-`stupidly.deep.stucture` & `utils.fibonacci` show that any kind of structure can be modified or replaced at any kind of depth: `patch` is geared towards the common case of objects, but `scope` can deal with any type in whatever way necessary. You get closures for free so gnarly patch logic can be isolated at the point where it makes the most sense.
+## Purity / immutable operations
 
-```JS
+Patchinko was originally with the express goal of mutating persistent objects to modify behaviour invoked elsewhere, but is perfectly suited to immutable object transformation. In order to avoid mutating targets, simply provide a new object instance as the first argument in p and ps invocations.
 
-````
+## Patching 
 
-# Why
+This tool was originally written to monkey patch a complex & unwieldy third party API written in consummate early 00s AOP style. The API in question used a mixture of overlapping config-based interfaces and instruction methods with many internal esoteric object types and an ambiguous nested OOP plugin architecture. These APIs are difficult enough to read and use on their own terms without the added precarity of Javascript's large and confusing panoply of methods for modifying objects and decorating functions. When monkey-patching is a necessity, Patchinko gives you a tiny yet comprehensive API for all conceivable concerns such that you can stop worrying about how monkey-patching & decorating works and how you should write your patch, allowing you to focus instead on the API you're patching & the patch itself.
 
-Patchinko was originally written to help monkey-patch an incredibly unwieldy piece of legacy code written in abject-oriented style - [CKEDITOR](https://docs.ckeditor.com/#!/api) to be precise. The code in question consisted of large, obtuse and inflexible configurations and interlinked method references, which was difficult enough to interpret in the first place. By using Patchinko, the necessarily cumbersome patch ressembles the structure it seeks to patch with minimum ceremony, freeing up head space to consider the intricacies of the problem API rather than the mundane difficulty of patching correctly in the first place.
+In this simple example, an object is patched to modify a static property and decorate a method. In this case, the decoration provides logs of current state & invocation arguments before executing the decorated method as it normally would be.
 
-# But
+It's difficult to demonstrate a realistic example of useful Patchinko patching without reference to an esoteric API and a recondite problem case: Patchinko's elegance emerges from the clarity of being able to focus on several patching operations in a declarative construct, but making sense of multiple operations in the same construct depends on an understanding of the structure and intent of a target and patches relating to domain specific concerns: Patchinko itself aims to be as small, generic and transparent as possible so that complex domain specific concerns shine through in written code. Moreover, this is not a common or desirable problem: the cognitive burden of monkey-patching & decorating a complex object is significant. The fact it is rarely mentioned, and then most often with a strong warning not to do so is a testament to the fact that: it usually indicates a deeper problem (is the underlying target API the right choice, if it requires custom hacks to operate the way you want it to?), and also speaks to the extra cognitive burden of figuring out what methods are safest / necessary / most appropriate to apply such hacks in Javascript. Patchinko solves the latter problem in a way that obviates code style paralysis but makes no claim to the former.
 
-Monkey-patching is a recondite use case. Most applications of siginificant complexity will at some point face difficulties in state management. People argue the toss about the merits of mutability, different communication patterns, etc - in my opinion the key value of 'reducers', 'actions', 'lenses' etc is only really beneficial inasmuch as the ceremony of designing & writing such things distracts the brain from otherwise loose creativity, and limits the number of ways in which you might be tempted to interact with state, for the mundane reason that the more ways in which state can / is modified, the harder code is to reason about.
+## Guide
 
-Patchinko eases that burden by providing a declarative, recursive, function-oriented pattern with a simple & flexible API. Mutating state with Patchinko is safer because it provides an easy way to do so safely, without insisting on heavy-handed, exotic new concepts or obnoxious restrictions. Moreover, a Patchinko patch is isomorphic inasmuch as it resembles the object it patches - in stark contrast to reducers, actions & lenses where any given use instance has more in common with every other use instance than it does the transaction / data it represents.
+Given the paradox of meaningful illustrations of holistic patching concerns, we can still illustrate how discrete types of patching intent are performed, with an understanding that Patchinko becomes increasingly useful as many such operations are combined recursively.
+
+These examples are written in a way that takes full advantage of modern ECMAScript for expressive purposes, but Patchinko itself is written in pure ECMAScript 3 and will work out of the box in any Javascript environment, whether that be Internet Explorer 6 or an old Rhino build.
+
+These examples are divided into 2 discrete areas. The first concerns data structures, which illustrates changes to 'plain' data objects; the second concerns decoration, which involves recondite uses of s to shadow functions, and merits a more involved documentation on its own terms. If you're only concerned with state management, you probably only need the first. If you're embarking for nightmare-mode monkey-patching hell levels you'll likely need both, and reference to the second is probably more pertinent.
+
+### Data structures 
+
+#### Static object mutation
+
+In this example we want to change a couple of properties of a data structure representing state.
+
+### Decoration 
+
+...
+
+***
+
+1. <a name=f-romanisation></a> Who's to say *パチンコ* can't be romanised *patchinko*? [It's good enough for Mano Negra](https://en.wikipedia.org/wiki/In_the_Hell_of_Patchinko), who are good enough for me [🔙](#user-content-s-romanisation).
+
+2. <a name=f-exotic></a> Patchinko stands in contrast to constructs like lenses, reducers (in the sense of Redux), etc, which rely on highly formalised application code boilerplate to change or transform objects. Arguably, there is a value proposition in many patterns like React's `setState` etc whereby changes to data structures are cumbersome enough that the author is disuaded from the effort of using them when they might not need to, and for anybody reading the code the fact that data is being modified is made more prominent than the modification itself. In this way these constructs perpetuate the idea that data transformation is necessarily burdensome. Patchinko accepts the original premise but aims to solve it rather than reinforce it. [🔙](#user-content-s-exotic)
