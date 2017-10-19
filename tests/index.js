@@ -1,31 +1,31 @@
 const o = require('ospec')
 
-const {patch, scope, ps} = require('../index.js')
+const {p, s, ps, d} = require('../index.js')
 
 const I = x => x
 const A = f => x => f(x)
 
-o('`scope`', () => {
+o('`s`', () => {
   const unique = Symbol('unicum')
 
   o(
-    scope(I).apply(unique)
+    s(I).apply(unique)
   ).equals(
     A(I)(unique)
   )
     ('is equivalent to an applicative combinator')
 
   o(
-    scope(I) instanceof scope
+    s(I) instanceof s
   ).equals(
     true
   )
-    ('whose partial application is identifiable as a `scope`')
+    ('whose partial application is identifiable as an `s`')
 })
 
-o.spec('`patch`', () => {
+o.spec('`p`', () => {
   o('consumes a target object & an input object', () => {
-    o(patch({}, {}))
+    o(p({}, {}))
   })
 
   o('is equivalent to `Object.assign` in the absence of `scope`', () => {
@@ -37,29 +37,29 @@ o.spec('`patch`', () => {
     const [a, b] = [factoryA(), factoryB()]
 
     o(
-      patch(a, b)
+      p(a, b)
     ).equals(
       a
     )
       ('preserves target identity')
 
     o(
-      patch(factoryA(), factoryB())
+      p(factoryA(), factoryB())
     ).deepEquals(
       Object.assign(factoryA(), factoryB())
     )
       ('copies properties of input onto target')
   })
 
-  o.spec('with `scope`', () => {
+  o.spec('with `s`', () => {
     o('supplies the target\'s property value to the scoped function', () => {
       const unique = Symbol('unicum')
 
       let interception
 
-      patch(
+      p(
         {a: unique},
-        {a: scope(received => {
+        {a: s(received => {
           interception = received
         })}
       )
@@ -72,17 +72,17 @@ o.spec('`patch`', () => {
       const unique2 = Symbol('unicum2')
 
       o(
-        patch(
+        p(
           {a: unique1},
-          {a: scope(I)}
+          {a: s(I)}
         ).a
       ).equals(
         unique1
       )
       o(
-        patch(
+        p(
           {a: unique1},
-          {a: scope(() => unique2)}
+          {a: s(() => unique2)}
         ).a
       ).equals(
         unique2
@@ -92,14 +92,14 @@ o.spec('`patch`', () => {
 })
 
 o.spec('`ps`', () => {
-  o('composes `patch` with `scope`, allowing recursion', () => {
+  o('composes `p` with `s`, allowing recursion', () => {
     const one = Symbol('one')
     const two = Symbol('two')
 
     let interception
 
     o(
-      patch(
+      p(
         {
           a: {
             b: one
@@ -108,7 +108,7 @@ o.spec('`ps`', () => {
 
         {
           a: ps({
-            b: scope(received => {
+            b: s(received => {
               interception = received
 
               return two
@@ -127,9 +127,10 @@ o.spec('`ps`', () => {
 
     o(interception).equals(one)
   })
+
   o('accepts a custom target', () => {
     o(
-      patch(
+      p(
         {
           a: [1, 2]
         },
@@ -146,6 +147,21 @@ o.spec('`ps`', () => {
       {
         a: [1, 3]
       }
+    )
+  })
+})
+
+o.spec('`d`', () => {
+  o('allows properties on the target to be deleted', () => {
+    const target = p(
+      {foo: 'bar'},
+      {foo: d}
+    )
+
+    o(
+      'foo' in target
+    ).equals(
+      false
     )
   })
 })
