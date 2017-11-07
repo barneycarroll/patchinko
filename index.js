@@ -1,7 +1,7 @@
 function p(target){
   for(var i = 1; i < arguments.length; i++)
     for(var key in arguments[i])
-      if(arguments[i].hasOwnProperty(key)){
+      if(arguments[i].hasOwnProperty(key))
         if(arguments[i][key] === d)
           delete target[key]
         
@@ -11,7 +11,6 @@ function p(target){
             ? arguments[i][key].apply(target[key])
             : arguments[i][key]
           )
-      }
 
   return target
 }
