@@ -18,29 +18,29 @@ Patchinko consists of 4 methods.
 
 ## p(target, ...patches)
 
-p behaves identically to Object.assign, except when properties on patch objects are of the special types listed below
+`p` behaves identically to [`Object.assign`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign), except when properties on `patch` objects are of the special types listed below:
 
 ## s(function scope(definition){})
 
-s consumes a scope function and returns a special type that, when encountered as a patch property in a p operation, will execute the scope function, supplying the property of the same key from the target as the definition argument, and replace it with the return value*.
+`s` consumes a 'scope function' and returns a special type that, when encountered as a patch property in a `p` operation, will execute the scope function, supplying the property of the same key from the target as the definition argument, and replace it with the return value*.
 
 ## d
 
-When encountered as a patch property in a p operation, deletes the property of the same key on the target.
+When encountered as a patch property in a `p` operation, [deletes](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/delete) the property of the same key on the target.
 
 ## ps(patch)
 
-When encountered as a patch property in a p operation, patches the property of the same key on the target with patch. Equivalent to `s(definition => p(definition, patch))`.
+When encountered as a patch property in a `p` operation, patches the property of the same key on the target with patch. Short-hand for `s(definition => p(definition, patch))`.
 
 ## ps(target, ...patches)
 
-As above, except the original definition is supplied to the underlying p invocation as the 2nd argument. Equivalent to `s(definition => p(target, definition, ...patches))`. Necessary for immutable deep object patch operations.
+As above, except the original definition is supplied to the underlying `p` invocation as the *2nd argument* - not the first. Equivalent to `s(definition => p(target, definition, ...patches))`. Necessary for immutable deep object patch operations.
 
 # What
 
 ## Purity / immutable operations
 
-Patchinko was originally with the express goal of mutating persistent objects to modify behaviour invoked elsewhere, but is perfectly suited to immutable object transformation. In order to avoid mutating targets, simply provide a new object instance as the first argument in p and ps invocations.
+Patchinko was originally with the express goal of mutating persistent objects to modify behaviour invoked elsewhere, but is perfectly suited to immutable object transformation. In order to avoid mutating targets, simply provide a new object instance as the 1st argument in `p` and `ps` invocations.
 
 ## Patching 
 
@@ -72,4 +72,4 @@ In this example we want to change a couple of properties of a data structure rep
 
 1. <a name=f-romanisation></a> Who's to say *パチンコ* can't be romanised *patchinko*? [It's good enough for Mano Negra](https://en.wikipedia.org/wiki/In_the_Hell_of_Patchinko), who are good enough for me [🔙](#user-content-s-romanisation).
 
-2. <a name=f-exotic></a> Patchinko stands in contrast to constructs like lenses, reducers (in the sense of Redux), etc, which rely on highly formalised application code boilerplate to change or transform objects. Arguably, there is a value proposition in many patterns like React's `setState` etc whereby changes to data structures are cumbersome enough that the author is disuaded from the effort of using them when they might not need to, and for anybody reading the code the fact that data is being modified is made more prominent than the modification itself. In this way these constructs perpetuate the idea that data transformation is necessarily burdensome. Patchinko accepts the original premise but aims to solve it rather than reinforce it. [🔙](#user-content-s-exotic)
+2. <a name=f-exotic></a> Patchinko stands in contrast to the unwieldly structures created & consumed by eg. lenses, reducers (in the sense of Redux), etc, which rely on highly formalised application code boilerplate to change or transform objects. Arguably, there is a value proposition in many patterns like React's `setState` etc whereby changes to data structures are cumbersome enough that the author is disuaded from the effort of using them when they might not need to, and for anybody reading the code the fact that data is being modified is made more prominent than the modification itself. In this way these constructs perpetuate the idea that data transformation is necessarily burdensome. Patchinko accepts the original premise but aims to solve it rather than reinforce it. [🔙](#user-content-s-exotic)
