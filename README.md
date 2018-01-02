@@ -6,7 +6,7 @@ Throw your rose-tinted [lenses](https://medium.com/javascript-inside/an-introduc
 
 # What
 
-Patchinko exposes 5 APIs: `P`, `S`, `PS`, `D` & `O`.
+Patchinko exposes 4 granular APIs: `P`, `S`, `PS`, & `D`.
 
 `P` is like `Object.assign`: given `P(target, input1, input2, etc)`, it consumes inputs left to right and copies their properties onto the supplied target
 
@@ -18,22 +18,44 @@ If any target properties are `D`, it will delete the property of the same key on
 
 `PS([ target, ] input)` is a composition of `P` & `S`, for when you need to patch recursively. If you supply a `target`, the original value will be left untouched (useful for immutable patching).
 
-`O` is an overloaded API that subsumes the above given a few assumptions:
+***
+
+Patchinko also comes with a don't-make-me-think single-reference overloaded API - useful when the essential patching operations are intuitive but the different API invocations are cognitively overbearing to determine or noisy to read.
+
+`O` is an overloaded API that subsumes the above (with the exception of the n-ary immutable `PS` overload):
 
 1. No arguments stands in for `D`.
 2. A function argument stands in for `S`.
 3. A non-function single argument stands in for `PS`.
 4. …otherwise, `P`.
 
-`O` is useful when Patchinko patching is intuitive but you find the API invocations noisy or cognitively overbearing.
+# Where
+
+Supplied in CommonJS module format & as unscoped top-level references. Available on [npm](https://npmjs.org/package/patchinko) & [UNPKG cdn](https://unpkg.com/patchinko).
+
+In Node:
+
+```js
+const {P, S, PS, D} = require('patchinko')
+// or
+const O = require('patchinko/overloaded')
+```
+
+In the browser:
+
+```html
+<script src=//unpkg.com/patchinko></script>
+<script>console.log({P, S, PS, D})</script>
+<!-- or -->
+<script src=//unpkg.com/patchinko/overloaded></script>
+<script>console.log({O})</script>
+```
 
 # How
 
 The kitchen sink example:
 
 ```js
-const {P, S, PS, D} = require('patchinko')
-
 // Some arbitrary structure
 const thing = {
   foo: 'bar',
@@ -46,7 +68,7 @@ const thing = {
     mean: (...set) =>
       set.reduce((a, b) => a + b) / set.length,
 
-    fibonacci: function(x) {
+    fibonacci(x){
       return x <= 1 ? x : this.fibonacci(x - 1) + this.fibonacci(x - 2)
     },
   },
@@ -66,14 +88,14 @@ P(thing, {
   bish: D, // Delete property `bish`
 
   utils: PS({ // We want to patch a level deeper
-    fibonacci: S(function closure(definition){ // Memoize `fibonacci`
-      var cache = {}
+    fibonacci: S(fibonacci => { // Memoize `fibonacci`
+      const cache = {}
 
-      return function override(x){
+      return function(x){
         return (
           x in cache
           ? cache[x]
-          : cache[x] = definition.apply(this, arguments)
+          : cache[x] = fibonacci.call(this, x)
         )
       }
     })
@@ -101,27 +123,27 @@ Observe that:
 
 `stupidly.deep.stucture` & `utils.fibonacci` show that any kind of structure can be modified or replaced at any kind of depth: `P` is geared towards the common case of objects, but `S` can deal with any type in whatever way necessary. You get closures for free so gnarly patch logic can be isolated at the point where it makes the most sense.
 
-## Kitchen sink using `O`
+***
 
 Using the overloaded API, the same results are achieved as follows:
 
 ```js
-const {O} = require('patchinko')
+const O = require('patchinko/overloaded')
 
 O(thing, {
   foo: 'baz',
 
-  bish: O(),
+  bish: O,
 
   utils: O({
-    fibonacci: O(function closure(definition){
-      var cache = {}
+    fibonacci: O(fibonacci => {
+      const cache = {}
 
-      return function override(x){
+      return function(x){
         return (
           x in cache
           ? cache[x]
-          : cache[x] = definition.apply(this, arguments)
+          : cache[x] = fibonacci.call(this, x)
         )
       }
     })
@@ -134,13 +156,13 @@ O(thing, {
       )
     }),
     with: O(structure =>
-      O([], structure, {1: 'copy'}) 🤔
+      O([], structure, {1: 'copy'}) // [1]
     )
   })
 })
 ```
 
-☝️ Note that the single-API overload forbids the immutable `PS` overload because more than 1 argument will necessarily fork to `P`. Thus immutable nested structure patching with `O` requires 2 invocations, 1 forking to `S` and the second to `P`.
+[1️] The single-API overload forbids the immutable `PS` overload because more than 1 argument will necessarily fork to `P`. Thus immutable nested structure patching with `O` requires 2 invocations, 1 forking to `S` and the 2nd to `P`.
 
 # Why
 

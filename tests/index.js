@@ -30,8 +30,8 @@ o.spec('`P`', () => {
 
   o('is equivalent to `Object.assign` in the absence of `S`', () => {
     const [factoryA, factoryB] = [
-      () => ({a:'foo', b:2, d: {bar:  'z'}, f: [3, 4]}),
-      () => ({a:'baz', c:3, d: {fizz: 'z'}, f: 'buzz'}),
+      () => ({a: 'foo', b: 2, d: {bar:  'z'}, f: [3, 4]}),
+      () => ({a: 'baz', c: 3, d: {fizz: 'z'}, f: 'buzz'}),
     ]
 
     const [a, b] = [factoryA(), factoryB()]
@@ -52,7 +52,7 @@ o.spec('`P`', () => {
   })
 
   o.spec('with `S`', () => {
-    o('supplies the target\'s property value to the scoped function', () => {
+    o("supplies the target's property value to the scoped function", () => {
       const unique = Symbol('unicum')
 
       let interception
@@ -75,21 +75,21 @@ o.spec('`P`', () => {
 
       o(
         P(
-          { a: unique1 },
+          { a: unique1 }, 
           { a: S(I) }
         ).a
       ).equals(
         unique1
-        )
+      )
 
       o(
         P(
-          { a: unique1 },
+          { a: unique1 }, 
           { a: S(() => unique2) }
         ).a
       ).equals(
         unique2
-        )
+      )
     })
   })
 
@@ -97,35 +97,12 @@ o.spec('`P`', () => {
     o('deletes the target property with the same key', () => {
       o(
         P(
-          { a: 1, b: 2 },
+          { a: 1, b: 2 }, 
           { a: D }
         )
       ).deepEquals(
         { b: 2 }
       )
-    })
-
-    o('assigns the product of any scoped closures to the target properties', () => {
-      const unique1 = Symbol('unicum1')
-      const unique2 = Symbol('unicum2')
-
-      o(
-        P(
-          { a: unique1 },
-          { a: S(I) }
-        ).a
-      ).equals(
-        unique1
-        )
-
-      o(
-        P(
-          { a: unique1 },
-          { a: S(() => unique2) }
-        ).a
-      ).equals(
-        unique2
-        )
     })
   })
 })
@@ -155,17 +132,17 @@ o.spec('`PS`', () => {
           })
         }
       )
-    )
-      .deepEquals(
-        {
-          a: {
-            b: two
-          }
+    ).deepEquals(
+      {
+        a: {
+          b: two
         }
-      )
+      }
+    )
 
     o(interception).equals(one)
   })
+
   o('accepts a custom target', () => {
     o(
       P(
@@ -174,7 +151,7 @@ o.spec('`PS`', () => {
         },
         {
           a: PS(
-            [],
+            [], 
             {
               1: 3
             }
