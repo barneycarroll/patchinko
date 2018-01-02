@@ -6,15 +6,26 @@ Throw your rose-tinted [lenses](https://medium.com/javascript-inside/an-introduc
 
 # What
 
-Patchinko exposes 3 functions: `P`, `S`, & `PS`.
+Patchinko exposes 5 APIs: `P`, `S`, `PS`, `D` & `O`.
 
 `P` is like `Object.assign`: given `P(target, input1, input2, etc)`, it consumes inputs left to right and copies their properties onto the supplied target
 
 *…except that…*
 
-If any target properties are instances of `S(function)`, it will supply the scoped function with the target property for that key, and assign the result back to the target; if any target properties are `D`, it will delete the property of the same key on the target.
+If any target properties are instances of `S(function)`, it will supply the scoped function with the target property for that key, and assign the result back to the target.
+
+If any target properties are `D`, it will delete the property of the same key on the target.
 
 `PS([ target, ] input)` is a composition of `P` & `S`, for when you need to patch recursively. If you supply a `target`, the original value will be left untouched (useful for immutable patching).
+
+`O` is an overloaded API that subsumes the above given a few assumptions:
+
+1. No arguments stands in for `D`.
+2. A function argument stands in for `S`.
+3. A non-function single argument stands in for `PS`.
+4. …otherwise, `P`.
+
+`O` is useful when Patchinko patching is intuitive but you find the API invocations noisy or cognitively overbearing.
 
 # How
 
@@ -90,6 +101,46 @@ Observe that:
 
 `stupidly.deep.stucture` & `utils.fibonacci` show that any kind of structure can be modified or replaced at any kind of depth: `P` is geared towards the common case of objects, but `S` can deal with any type in whatever way necessary. You get closures for free so gnarly patch logic can be isolated at the point where it makes the most sense.
 
+## Kitchen sink using `O`
+
+Using the overloaded API, the same results are achieved as follows:
+
+```js
+const {O} = require('patchinko')
+
+O(thing, {
+  foo: 'baz',
+
+  bish: O(),
+
+  utils: O({
+    fibonacci: O(function closure(definition){
+      var cache = {}
+
+      return function override(x){
+        return (
+          x in cache
+          ? cache[x]
+          : cache[x] = definition.apply(this, arguments)
+        )
+      }
+    })
+  }),
+
+  stupidly: O({
+    deep: O({
+      structure: O(structure =>
+        structure.concat('roflmao')
+      )
+    }),
+    with: O(structure =>
+      O([], structure, {1: 'copy'}) 🤔
+    )
+  })
+})
+```
+
+☝️ Note that the single-API overload forbids the immutable `PS` overload because more than 1 argument will necessarily fork to `P`. Thus immutable nested structure patching with `O` requires 2 invocations, 1 forking to `S` and the second to `P`.
 
 # Why
 
