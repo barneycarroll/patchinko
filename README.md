@@ -6,28 +6,30 @@ Throw your rose-tinted [lenses](https://medium.com/javascript-inside/an-introduc
 
 # What
 
-Patchinko exposes 3 functions: `patch`, `scope`, & `ps`.
+Patchinko exposes 3 functions: `P`, `S`, & `PS`.
 
-`patch` is like `Object.assign` - given `patch(target, input1, input2, etc)`, it consumes inputs left to right and copies their properties onto the supplied target.
+`P` is like `Object.assign`: given `P(target, input1, input2, etc)`, it consumes inputs left to right and copies their properties onto the supplied target
 
-*except that*
+*…except that…*
 
-If any target properties are instances of `scope(function)`, it will supply the scoped function with the target property for that key, and assign the result back to the target.
+If any target properties are instances of `S(function)`, it will supply the scoped function with the target property for that key, and assign the result back to the target; if any target properties are `D`, it will delete the property of the same key on the target.
 
-`ps([ target, ] input)` is a composition of `patch` & `scope`, for when you need to patch recursively. If you supply a `target`, the original value will be left untouched (useful for immutable patching).
+`PS([ target, ] input)` is a composition of `P` & `S`, for when you need to patch recursively. If you supply a `target`, the original value will be left untouched (useful for immutable patching).
 
 # How
 
 The kitchen sink example:
 
 ```js
-const {patch : p, scope : s, ps} = require('patchinko')
+const {P, S, PS, D} = require('patchinko')
 
 // Some arbitrary structure
 const thing = {
   foo: 'bar',
 
   fizz: 'buzz',
+
+  bish: 'bash',
 
   utils: {
     mean: (...set) =>
@@ -42,16 +44,18 @@ const thing = {
     deep: {
       structure: ['lol']
     },
-    with: ['an', 'array', 'tacked']
+    with: ['a', 'list', 'tacked', 'on']
   }
 }
 
 // A deep patch
-p(thing, {
-  foo: 'baz', // Change the value of foo
+P(thing, {
+  foo: 'baz', // Change the value of `foo`
 
-  utils: ps({ // We want to patch a level deeper
-    fibonacci: s(function closure(definition){ // Memoize fibonacci
+  bish: D, // Delete property `bish`
+
+  utils: PS({ // We want to patch a level deeper
+    fibonacci: S(function closure(definition){ // Memoize `fibonacci`
       var cache = {}
 
       return function override(x){
@@ -64,16 +68,16 @@ p(thing, {
     })
   }),
 
-  stupidly: ps({
-    deep: ps({
-      structure: s(structure =>
+  stupidly: PS({
+    deep: PS({
+      structure: S(structure =>
         structure.concat('roflmao') // Why not
       )
     }),
-    with: ps(
+    with: PS(
       [],
       {1: 'copy'}
-    ) // ['a', 'copy', 'tacked'], the original array is left untouched
+    ) // ['a', 'copy', 'tacked', 'on'] - the original array is left untouched
   })
 })
 ```
@@ -84,11 +88,8 @@ Observe that:
 * `utils.fibonacci` can safely be decorated (again, the rest of `utils` is unaffected)
 * `stupidly.deep.structure` can be modified, keeping its identity
 
-`stupidly.deep.stucture` & `utils.fibonacci` show that any kind of structure can be modified or replaced at any kind of depth: `patch` is geared towards the common case of objects, but `scope` can deal with any type in whatever way necessary. You get closures for free so gnarly patch logic can be isolated at the point where it makes the most sense.
+`stupidly.deep.stucture` & `utils.fibonacci` show that any kind of structure can be modified or replaced at any kind of depth: `P` is geared towards the common case of objects, but `S` can deal with any type in whatever way necessary. You get closures for free so gnarly patch logic can be isolated at the point where it makes the most sense.
 
-```JS
-
-````
 
 # Why
 
