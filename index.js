@@ -2,7 +2,7 @@ function P(target){
   for(var i = 1; i < arguments.length; i++)
     for(var key in arguments[i])
       if(arguments[i].hasOwnProperty(key))
-        arguments[i][key] instanceof D
+        arguments[i][key] === D
         ? delete target[key]
         : target[key] =
           arguments[i][key] instanceof S
