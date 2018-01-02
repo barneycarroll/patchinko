@@ -77,7 +77,7 @@ P(thing, {
     with: PS(
       [],
       {1: 'copy'}
-    ) // ['a', 'copy', 'tacked'], the original array is left untouched
+    ) // ['a', 'copy', 'tacked', 'on'] - the original array is left untouched
   })
 })
 ```
