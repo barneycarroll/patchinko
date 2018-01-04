@@ -28,7 +28,7 @@ function PS(target, input){
       return P(target, definition, input)
     }
     : function(definition){
-      return P(definition, target)
+      return definition == void 0 ? target : P(definition, target)
     }
   )
 }
