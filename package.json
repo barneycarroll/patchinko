@@ -1,8 +1,8 @@
 {
   "name": "patchinko",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "description": "Concise monkey-patching utility",
-  "main": "index.js",
+  "main": "explicit.js",
   "repository": "git@github.com:barneycarroll/patchinko.git",
   "author": "Barney Carroll <barney.carroll@gmail.com>",
   "license": "MIT",

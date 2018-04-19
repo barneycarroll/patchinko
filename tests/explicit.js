@@ -1,6 +1,6 @@
 const o = require('ospec')
 
-const {P, S, PS, D} = require('../index.js')
+const {P, S, PS, D} = require('../explicit.js')
 
 const I = x => x
 const A = f => x => f(x)
@@ -75,7 +75,7 @@ o.spec('`P`', () => {
 
       o(
         P(
-          { a: unique1 }, 
+          { a: unique1 },
           { a: S(I) }
         ).a
       ).equals(
@@ -84,7 +84,7 @@ o.spec('`P`', () => {
 
       o(
         P(
-          { a: unique1 }, 
+          { a: unique1 },
           { a: S(() => unique2) }
         ).a
       ).equals(
@@ -97,7 +97,7 @@ o.spec('`P`', () => {
     o('deletes the target property with the same key', () => {
       o(
         P(
-          { a: 1, b: 2 }, 
+          { a: 1, b: 2 },
           { a: D }
         )
       ).deepEquals(
@@ -151,7 +151,7 @@ o.spec('`PS`', () => {
         },
         {
           a: PS(
-            [], 
+            [],
             {
               1: 3
             }
