@@ -1,12 +1,14 @@
 # Patchinko [![Build Status](https://travis-ci.org/barneycarroll/patchinko.svg?branch=master)](https://travis-ci.org/barneycarroll/patchinko)
 
-A tool for making deep & subtle mutations on Javascript structures. State updates, [monkey-patching](https://en.wikipedia.org/wiki/Monkey_patch), and more are a breeze with Patchinko.
+A tool for making deep & subtle mutations on - or modified copies of - Javascript structures. State updates, [monkey-patching](https://en.wikipedia.org/wiki/Monkey_patch), and more are a breeze with Patchinko.
 
 Throw your rose-tinted [lenses](https://medium.com/javascript-inside/an-introduction-into-lenses-in-javascript-e494948d1ea5), [reducers](http://redux.js.org/docs/basics/Reducers.html) & [decorators](https://tc39.github.io/proposal-decorators/) out the window: Patchinko is an ECMAScript3-compliant utility that makes complex patching fast and easy, without the ceremony.
 
 # What
 
-Patchinko exposes 4 granular APIs: `P`, `S`, `PS`, & `D`.
+## Explicit
+
+Patchinko exposes 4 explicit APIs: `P`, `S`, `PS`, & `D`.
 
 `P` is like `Object.assign`: given `P(target, input1, input2, etc)`, it consumes inputs left to right and copies their properties onto the supplied target
 
@@ -18,7 +20,7 @@ If any target properties are `D`, it will delete the property of the same key on
 
 `PS([ target, ] input)` is a composition of `P` & `S`, for when you need to patch recursively. If you supply a `target`, the original value will be left untouched (useful for immutable patching).
 
-***
+## Overloaded
 
 Patchinko also comes with a don't-make-me-think single-reference overloaded API - useful when the essential patching operations are intuitive but the different API invocations are cognitively overbearing to determine or noisy to read.
 
@@ -28,6 +30,10 @@ Patchinko also comes with a don't-make-me-think single-reference overloaded API 
 2. A function argument stands in for `S`.
 3. A non-function single argument stands in for `PS`.
 4. …otherwise, `P`.
+
+## Immutable
+
+In practice, Patchinko works best overloaded: it favours a do-what-I-mean approach where the Patchinko API disappears into the background. But the `PS` overload heuristics mean that convenience comes at the cost of immutable workflows. You can instead use an immutable variation of the overloaded API that always shallow clones the target for paths 3 & 4. *But* the simplistic cloning heuristics involved mean that these paths can only operate predictably if the target (3) or target property (4) is a plain object, array, string, number, boolean or 'undefined'. This mode is best suited to flux-like 'unidirectional data-flow' state creation workflows.
 
 # Where
 
@@ -39,6 +45,8 @@ In Node:
 const {P, S, PS, D} = require('patchinko')
 // or
 const O = require('patchinko/overloaded')
+// or
+const O = require('patchinko/immutable')
 ```
 
 In the browser:
@@ -48,6 +56,9 @@ In the browser:
 <script>console.log({P, S, PS, D})</script>
 <!-- or -->
 <script src=//unpkg.com/patchinko/overloaded></script>
+<script>console.log({O})</script>
+<!-- or -->
+<script src=//unpkg.com/patchinko/immutable></script>
 <script>console.log({O})</script>
 ```
 
