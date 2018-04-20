@@ -5,7 +5,7 @@ const O = require('../immutable.js')
 const I = x => x
 const A = f => x => f(x)
 
-o('`O` (with a single function argument)', () => {
+o('`O` immutable (with a single function argument)', () => {
   const unique = Symbol('unicum')
 
   o(
@@ -23,7 +23,7 @@ o('`O` (with a single function argument)', () => {
     ('whose partial application is identifiable as an `O`')
 })
 
-o.spec('`O` (with 2 or more arguments)', () => {
+o.spec('`O` immutable (with 2 or more arguments)', () => {
   o('consumes a target object & an input object', () => {
     o(O({}, {}))
   })
