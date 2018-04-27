@@ -24,6 +24,9 @@ function O(a, b){
         return O(c, a)
       })
 
+  else if(!a)
+    return O.call.apply(O, arguments)
+
   else {
     a = copy(a)
 

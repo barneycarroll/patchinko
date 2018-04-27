@@ -3,7 +3,7 @@ function O(a, b){
     if(typeof a == 'function')
       if(!(this instanceof O))
         return new O(a)
-      
+
       else
         this.apply = function(c){
           return a(c)
@@ -13,6 +13,9 @@ function O(a, b){
       return new O(function(c){
         return O(c, a)
       })
+
+  else if(!a)
+    return O.call.apply(O, arguments)
 
   else {
     for(var i = 1; i < arguments.length; i++, b = arguments[i])
