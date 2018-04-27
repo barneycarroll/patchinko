@@ -166,7 +166,7 @@ o.spec('`PS`', () => {
   })
 })
 
-o('`O` explicit (with a single function argument)', () => {
+o('`O` (as part of explicit package) (with a single function argument)', () => {
   const unique = Symbol('unicum')
 
   o(
@@ -177,7 +177,7 @@ o('`O` explicit (with a single function argument)', () => {
     ('is equivalent to an applicative combinator')
 })
 
-o.spec('`O` explicit (with 2 or more arguments)', () => {
+o.spec('`O`(as part of explicit package) (with 2 or more arguments)', () => {
   o('consumes a target object & an input object', () => {
     o(O({}, {}))
   })
