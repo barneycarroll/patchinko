@@ -35,16 +35,6 @@ function PS(target, input){
 
 function D(){}
 
-function O(x){
-  return arguments.length
-    ? 1 < arguments.length
-      ? P.apply(null, arguments)
-      : typeof x === 'function'
-        ? new S(x)
-        : PS(x)
-    : D
-}
-
 try {
-  module.exports = {P: P, S: S, PS: PS, D: D, O: O}
+  module.exports = {P: P, S: S, PS: PS, D: D}
 } catch(e) {}
