@@ -1,4 +1,7 @@
 function P(target){
+  if(target == null)
+    return P.call.apply(P, arguments)
+
   for(var i = 1; i < arguments.length; i++)
     for(var key in arguments[i])
       if(arguments[i].hasOwnProperty(key))

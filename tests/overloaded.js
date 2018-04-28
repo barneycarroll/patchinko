@@ -29,27 +29,47 @@ o.spec('Mutable overload API: ', () => {
       o(O({}, {}))
     })
 
-    o('is equivalent to `Object.assign` in the absence of any sub-properties', () => {
+    o.spec('is equivalent to `Object.assign` in the absence of any sub-properties', () => {
       const [factoryA, factoryB] = [
         () => ({a: 'foo', b: 2, d: {bar:  'z'}, f: [3, 4]}),
         () => ({a: 'baz', c: 3, d: {fizz: 'z'}, f: 'buzz'}),
       ]
 
-      const [a, b] = [factoryA(), factoryB()]
+      o('preserves target identity', () => {
+        const [a, b] = [factoryA(), factoryB()]
 
-      o(
-        O(a, b)
-      ).equals(
-        a
-      )
-        ('preserves target identity')
+        o(
+          O(a, b)
+        ).equals(
+          a
+        )
+      })
 
-      o(
-        O(factoryA(), factoryB())
-      ).deepEquals(
-        Object.assign(factoryA(), factoryB())
-      )
-        ('copies properties of input onto target')
+      o('copies properties of input onto target', () => {
+        o(
+          O(factoryA(), factoryB())
+        ).deepEquals(
+          Object.assign(factoryA(), factoryB())
+        )
+      })
+
+      o.spec('with the exception that', () => {
+        o('it will return the input directly if the target is null or undefined', () => {
+          const input = {}
+
+          o(
+            O(null, input)
+          ).equals(
+            input
+          )
+
+          o(
+            O(undefined, input)
+          ).equals(
+            input
+          )
+        })
+      })
     })
 
     o.spec('with nested (single-function-consuming) `O` properties', () => {

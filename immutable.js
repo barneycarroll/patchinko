@@ -8,7 +8,7 @@ function copy(x){
   return y
 }
 
-function O(a, b){
+function O(a, b, c){
   if(arguments.length == 1)
     if(typeof a == 'function')
       if(!(this instanceof O))
@@ -23,6 +23,9 @@ function O(a, b){
       return new O(function(c){
         return O(c, a)
       })
+
+  else if(a == null)
+    return c ? O.call.apply(O, arguments) : b
 
   else {
     a = copy(a)
