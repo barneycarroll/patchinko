@@ -2,7 +2,7 @@ function P(target){
   for(var i = 1; i < arguments.length; i++)
     for(var key in arguments[i])
       if(arguments[i].hasOwnProperty(key))
-        (arguments[i][key] === D || arguments[i][key] === O)
+        (arguments[i][key] === D)
         ? delete target[key]
         : target[key] =
           arguments[i][key] instanceof S
@@ -35,16 +35,6 @@ function PS(target, input){
 
 function D(){}
 
-function O(x){
-  return arguments.length
-    ? 1 < arguments.length
-      ? P.apply(null, arguments)
-      : typeof x === 'function'
-        ? new S(x)
-        : PS(x)
-    : D
-}
-
 try {
-  module.exports = {P: P, S: S, PS: PS, D: D, O: O}
+  module.exports = {P: P, S: S, PS: PS, D: D}
 } catch(e) {}
