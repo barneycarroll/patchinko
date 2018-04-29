@@ -72,49 +72,90 @@ o.spec('Mutable overload API: ', () => {
       })
     })
 
-    o.spec('with nested (single-function-consuming) `O` properties', () => {
-      o("supplies the target's property value to the scoped function", () => {
-        const unique = Symbol('unicum')
+    o.spec('with nested `O` invocations', () => {
+      o.spec('containing a single function', () => {
+        o("supplies the target's property value to the scoped function", () => {
+          const unique = Symbol('unicum')
 
-        let interception
+          let interception
 
-        O(
-          { a: unique },
-          {
-            a: O(received => {
-              interception = received
-            })
-          }
-        )
-
-        o(interception).equals(unique);
-      });
-
-      o('assigns the product of any scoped closures to the target properties', () => {
-        const unique1 = Symbol('unicum1')
-        const unique2 = Symbol('unicum2')
-
-        o(
           O(
-            { a: unique1 },
-            { a: O(I) }
-          ).a
-        ).equals(
-          unique1
-        )
+            { a: unique },
+            {
+              a: O(received => {
+                interception = received
+              })
+            }
+          )
 
-        o(
-          O(
-            { a: unique1 },
-            { a: O(() => unique2) }
-          ).a
-        ).equals(
-          unique2
-        )
+          o(interception).equals(unique);
+        })
+
+        o('assigns the product of any scoped closures to the target properties', () => {
+          const unique1 = Symbol('unicum1')
+          const unique2 = Symbol('unicum2')
+
+          o(
+            O(
+              { a: unique1 },
+              { a: O(I) }
+            ).a
+          ).equals(
+            unique1
+          )
+
+          o(
+            O(
+              { a: unique1 },
+              { a: O(() => unique2) }
+            ).a
+          ).equals(
+            unique2
+          )
+        })
+      })
+
+      o.spec('containing objects', () => {
+        o('performs a deep patch', () => {
+          const one = Symbol('one')
+          const two = Symbol('two')
+
+          let interception
+
+          o(
+            O(
+              { a: { b: one } },
+
+              {
+                a: O({
+                  b: O(received => (
+                    interception = received,
+                    two
+                  ))
+                })
+              }
+            )
+          ).deepEquals(
+            { a: { b: two } }
+          )
+
+          o(interception).equals(one)
+
+          o(
+            O(
+              {},
+              { a: O({ b: 'foo' }) }
+            )
+          )
+            .deepEquals(
+              { a: { b: 'foo' } }
+            )
+              ('even if the target does not contain a property on that key')
+        })
       })
     })
 
-    o.spec('with `O` (supplied as a property value)', () => {
+    o.spec('with `O` supplied as a patched property value', () => {
       o('deletes the target property with the same key', () => {
         o(
           O(

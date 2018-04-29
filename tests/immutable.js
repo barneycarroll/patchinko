@@ -72,61 +72,102 @@ o.spec('Immutable overload API: ', () => {
       })
     })
 
-    o.spec('with nested (single-function-consuming) `O` properties', () => {
-      o("supplies the target's property value to the scoped function", () => {
-        let interception
+    o.spec('with nested `O` invocations', () => {
+      o.spec('containing a single function', () => {
+        o("supplies the target's property value to the scoped function", () => {
+          let interception
 
-        O(
-          { a: 'primitive' },
-          {
-            a: O(received => {
-              interception = received
-            })
-          }
-        )
-
-        o(interception).equals('primitive');
-      });
-
-      o("clones the target's property value for the scoped function", () => {
-        const unique = {a: 'foo'}
-
-        let interception
-
-        O(
-          { a: unique },
-          {
-            a: O(received => {
-              interception = received
-            })
-          }
-        )
-
-        o(interception).notEquals(unique);
-      });
-
-      o('assigns the product of any scoped closures to the target properties', () => {
-        o(
           O(
-            { a: 'foo' },
-            { a: O(I) }
-          ).a
-        ).equals(
-          'foo'
-        )
+            { a: 'primitive' },
+            {
+              a: O(received => {
+                interception = received
+              })
+            }
+          )
 
-        o(
+          o(interception).equals('primitive');
+        })
+
+        o("clones the target's property value for the scoped function", () => {
+          const unique = {a: 'foo'}
+
+          let interception
+
           O(
-            { a: 'foo' },
-            { a: O(() => 'bar') }
-          ).a
-        ).equals(
-          'bar'
-        )
+            { a: unique },
+            {
+              a: O(received => {
+                interception = received
+              })
+            }
+          )
+
+          o(interception).notEquals(unique);
+        })
+
+        o('assigns the product of any scoped closures to the target properties', () => {
+          o(
+            O(
+              { a: 'foo' },
+              { a: O(I) }
+            ).a
+          ).equals(
+            'foo'
+          )
+
+          o(
+            O(
+              { a: 'foo' },
+              { a: O(() => 'bar') }
+            ).a
+          ).equals(
+            'bar'
+          )
+        })
+      })
+
+      o.spec('containing objects', () => {
+        o('performs a deep patch', () => {
+          const one = Symbol('one')
+          const two = Symbol('two')
+
+          let interception
+
+          o(
+            O(
+              { a: { b: one } },
+
+              {
+                a: O({
+                  b: O(received => (
+                    interception = received,
+                    two
+                  ))
+                })
+              }
+            )
+          ).deepEquals(
+            { a: { b: two } }
+          )
+
+          o(interception).equals(one)
+
+          o(
+            O(
+              {},
+              { a: O({ b: 'foo' }) }
+            )
+          )
+            .deepEquals(
+              { a: { b: 'foo' } }
+            )
+              ('even if the target does not contain a property on that key')
+        })
       })
     })
 
-    o.spec('with `O` (supplied as a property value)', () => {
+    o.spec('with `O` supplied as a patched property value', () => {
       o('deletes the target property with the same key', () => {
         o(
           O(
