@@ -19,9 +19,7 @@ function S(closure){
   if(!(this instanceof S))
     return new S(closure)
 
-  this.apply = function(definition){
-    return closure(definition)
-  }
+  this.apply = closure
 }
 
 function PS(target, input){

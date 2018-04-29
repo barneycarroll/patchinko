@@ -5,9 +5,7 @@ function O(a, b, c){
         return new O(a)
 
       else
-        this.apply = function(c){
-          return a(c)
-        }
+        this.apply = a
 
     else
       return new O(function(c){
