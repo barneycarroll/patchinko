@@ -4,6 +4,8 @@ A tool for making deep & subtle mutations on - or modified copies of - Javascrip
 
 Throw your rose-tinted [lenses](https://medium.com/javascript-inside/an-introduction-into-lenses-in-javascript-e494948d1ea5), [reducers](http://redux.js.org/docs/basics/Reducers.html) & [decorators](https://tc39.github.io/proposal-decorators/) out the window: Patchinko is an ECMAScript3-compliant utility that makes complex patching fast and easy, without the ceremony.
 
+[What](#what) ([explicit](#explicit), [immutable](#immutable), [overloaded](#overloaded)); [Where](#where); [How](#how); [Why](#why) ([but](#but)); [Changelog](#changelog).
+
 # What
 
 ## Explicit
@@ -184,3 +186,27 @@ Patchinko was originally written to help monkey-patch an incredibly unwieldy pie
 Monkey-patching is a recondite use case. Most applications of siginificant complexity will at some point face difficulties in state management. People argue the toss about the merits of mutability, different communication patterns, etc - in my opinion the key value of 'reducers', 'actions', 'lenses' etc is only really beneficial inasmuch as the ceremony of designing & writing such things distracts the brain from otherwise loose creativity, and limits the number of ways in which you might be tempted to interact with state, for the mundane reason that the more ways in which state can / is modified, the harder code is to reason about.
 
 Patchinko eases that burden by providing a declarative, recursive, function-oriented pattern with a simple & flexible API. Mutating state with Patchinko is safer because it provides an easy way to do so safely, without insisting on heavy-handed, exotic new concepts or obnoxious restrictions. Moreover, a Patchinko patch is isomorphic inasmuch as it resembles the object it patches - in stark contrast to reducers, actions & lenses where any given use instance has more in common with every other use instance than it does the transaction / data it represents.
+
+# Changelog
+
+## 3.2.0
+
+Allow *deep* patch-scopes to empty targets.
+
+## ^3.1.0
+
+Allow patching to `undefined`, `null` or absent targets
+
+## ^3.0.0
+
+Mutable & immutable single function `O` API via `/overloaded.js` & `/immutable.js` ([#8](https://github.com/barneycarroll/patchinko/issues/8))
+
+## ^2.0.0
+
+* API change to `{P, S, PS}`
+* Delete directive `D`
+* Ability for `PS` to consume an extra leading argument as target
+
+## ^1.0.0
+
+Patchinko published with explicit API of `{patch, scope, ps}`
