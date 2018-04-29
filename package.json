@@ -7,7 +7,7 @@
   "author": "Barney Carroll <barney.carroll@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "ospec": "^1.3.1"
+    "ospec": "^1.4.0"
   },
   "scripts": {
     "test": "ospec"

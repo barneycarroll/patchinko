@@ -156,11 +156,11 @@ o.spec('Immutable overload API: ', () => {
           o(
             O(
               {},
-              { a: O({ b: 'foo' }) }
+              { a: O({ b: O({ c: 'foo' }) }) }
             )
           )
             .deepEquals(
-              { a: { b: 'foo' } }
+              { a:   { b:   { c: 'foo' }  }  }
             )
               ('even if the target does not contain a property on that key')
         })
