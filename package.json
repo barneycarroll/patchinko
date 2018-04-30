@@ -11,6 +11,6 @@
     "ospec": "^1.4.0"
   },
   "scripts": {
-    "test": "ospec && eslint ./src"
+    "test": "ospec && eslint src"
   }
 }
