@@ -1,15 +1,16 @@
 {
   "name": "patchinko",
-  "version": "3.2.1",
+  "version": "3.2.2",
   "description": "A concise tool for declarative object manipulation",
   "main": "explicit.js",
   "repository": "git@github.com:barneycarroll/patchinko.git",
   "author": "Barney Carroll <barney.carroll@gmail.com>",
   "license": "MIT",
   "devDependencies": {
+    "eslint": "^4.19.1",
     "ospec": "^1.4.0"
   },
   "scripts": {
-    "test": "ospec"
+    "test": "ospec && eslint ./src"
   }
 }

@@ -1,6 +1,6 @@
 const o = require('ospec')
 
-const O = require('../immutable.js')
+const O = require('../src/immutable.js')
 
 const I = x => x
 const A = f => x => f(x)

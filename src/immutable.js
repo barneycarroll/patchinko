@@ -8,7 +8,7 @@ function copy(x){
   return y
 }
 
-function O(a, b, c){
+function O(a, b){
   if(arguments.length == 1)
     if(this instanceof O)
       this.apply =

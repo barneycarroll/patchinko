@@ -189,7 +189,7 @@ Patchinko eases that burden by providing a declarative, recursive, function-orie
 
 # Changelog
 
-## 3.2.1
+## 3.2.2
 
 Allow *deep* patch-scopes to empty targets (fix release).
 

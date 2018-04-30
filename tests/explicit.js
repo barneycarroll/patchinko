@@ -1,6 +1,6 @@
 const o = require('ospec')
 
-const {P, S, PS, D} = require('../explicit.js')
+const {P, S, PS, D} = require('../src/explicit.js')
 
 const I = x => x
 const A = f => x => f(x)

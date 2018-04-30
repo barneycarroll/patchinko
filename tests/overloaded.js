@@ -1,6 +1,6 @@
 const o = require('ospec')
 
-const O = require('../overloaded.js')
+const O = require('../src/overloaded.js')
 
 const I = x => x
 const A = f => x => f(x)
