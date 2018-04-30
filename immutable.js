@@ -10,20 +10,17 @@ function copy(x){
 
 function O(a, b, c){
   if(arguments.length == 1)
-    if(typeof a == 'function')
-      if(!(this instanceof O))
-        return new O(a)
-
-      else
-        this.apply = a
+    if(this instanceof O)
+      this.apply =
+        typeof a == 'function' ? a : function(b){
+          return O(b != null ? b : {}, a)
+        }
 
     else
-      return new O(function(c){
-        return O(c, a)
-      })
+      return new O(a)
 
   else if(a == null)
-    return c ? O.call.apply(O, arguments) : b
+    return arguments.length > 2 ? O.call.apply(O, arguments) : b
 
   else {
     a = copy(a)
