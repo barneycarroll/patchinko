@@ -1,6 +1,6 @@
 {
   "name": "patchinko",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "description": "A concise tool for declarative object manipulation",
   "main": "explicit.js",
   "repository": "git@github.com:barneycarroll/patchinko.git",
