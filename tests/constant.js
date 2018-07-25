@@ -1,6 +1,6 @@
 const o = require('ospec')
 
-const O = require('../src/overloaded.js')
+const O = require('../src/constant.js')
 
 const I = x => x
 const A = f => x => f(x)
@@ -26,7 +26,7 @@ o.spec('Mutable overload API: ', () => {
 
   o.spec('`O` (with 2 or more arguments)', () => {
     o('consumes a target object & an input object', () => {
-      o(O({}, {}))
+      O({}, {})
     })
 
     o.spec('is equivalent to `Object.assign` in the absence of any sub-properties', () => {

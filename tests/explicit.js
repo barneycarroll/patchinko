@@ -25,7 +25,7 @@ o('`S`', () => {
 
 o.spec('`P`', () => {
   o('consumes a target object & an input object', () => {
-    o(P({}, {}))
+    P({}, {})
   })
 
   o.spec('is equivalent to `Object.assign` in the absence of any sub-properties', () => {

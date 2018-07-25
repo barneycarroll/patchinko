@@ -26,7 +26,7 @@ o.spec('Immutable overload API: ', () => {
 
   o.spec('`O` (with 2 or more arguments)', () => {
     o('consumes a target object & an input object', () => {
-      o(O({}, {}))
+      O({}, {})
     })
 
     o.spec('is equivalent to an `Object.assign({}, target, ...inputs)` in the absence of any sub-properties', () => {
