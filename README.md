@@ -6,7 +6,7 @@ Throw your rose-tinted [lenses](https://medium.com/javascript-inside/an-introduc
 
 [What](#what) ([explicit](#explicit), [immutable](#immutable), [constant](#constant)); [Where](#where); [How](#how); [Why](#why) ([but](#but)); [Gotchas](#gotchas); [Changelog](#changelog).
 
-# What
+# What?
 
 ## Explicit
 
@@ -33,33 +33,30 @@ Patchinko also comes with a don't-make-me-think single-reference overloaded API 
 3. A non-function single argument stands in for `PS`.
 4. …otherwise, `P`.
 
-### Constant
+The overloaded API comes in 2 flavours:
 
-The first variation of the overloaded API assumes you want to mutate the `target`s you pass in to your top-level Patchinko call. In this case the `Object.assign` comparison holds true.
+### 1. Constant
 
-### Immutable
+The 1st variation of the overloaded API assumes you want to mutate the `target`s you pass in to your top-level Patchinko call. In this case the `Object.assign` comparison holds true.
 
-The second variation works on a more functional basis: the `target`s of each operation are left intact and any changes result in new objects being produced as the result of each operation. This is the immutable approach.
+### 2. Immutable
 
-#### Why does it matter?
+The 2nd works on a more functional basis: the `target`s of each operation are left intact and any changes result in new objects being produced as the result of each operation. This is the immutable approach.
+
+#### ☝️ Why does it matter?
 
 If you're using Patchinko to monkey-patch an arbitrary third party API, you almost certainly want to mutate it: complex APIs may use 'instanceof' and equality reference checks internally; if you're patching a class / prototypal construct with internal and external references across the code-base, you need to preserve those references in order for everything to work as expected.
 
 But if you're using Patchinko to make changes to a data structure that's the sole business of your application's data model, that kind of stuff shouldn't be necessary - you can and should certainly avoid those patterns (they're complex and brittle!). In this scenario, creating new objects instead of mutating old ones can make the development & debugging process significantly easier:
 
-# Where
+* Because the result of each patch operation is a new entity, you can store the results as new references and compare them later on. This can be useful when you want to see how a model has changed step by step over the course of several operations.
+* Because nested structures within the patched entity that *haven't* been individually patched will retain their old identity, you an use [memoization](https://en.wikipedia.org/wiki/Memoization) to avoid unnecessary reactive computations. Traditionally this has been touted as a method for reactive Javascript applications - in particular virtual DOM libraries like [Mithril](https://mithril.js.org/) - to increase performance by skipping wasteful recomputations; but IMO the salient advantage of this functionality is for debugging - you can set breakpoints far downstream in an application call graph and only pause script execution if and when change has occured.
+
+*As with all purported defensive 'best practices' in the name of performance - in the absence of any known quantities - the ability for the authors and readers of code to reason & interact with it lucidly should always be more pertinent in the architecture of code than notional theories of what the computer might prefer.*
+
+# Where?
 
 Supplied as ECMAScript modules (esm) or as script files with CommonJS module exports and unscoped top-level references. Available on [npm](https://npmjs.org/package/patchinko) & [UNPKG cdn](https://unpkg.com/patchinko). Patchinko's entry points import and export all APIs according to the environment module support: it is always preferable to explicitly reference the path of the desired API.
-
-With ESM:
-
-```mjs
-import {P, S, PS, D} from 'patchinko/explicit'
-// or
-import O from 'patchinko/constant'
-// or
-import O from 'patchinko/immutable'
-```
 
 In Node:
 
@@ -71,20 +68,30 @@ const O = require('patchinko/constant')
 const O = require('patchinko/immutable')
 ```
 
+With ESM:
+
+```mjs
+import {P, S, PS, D} from 'patchinko/explicit'
+// or
+import O from 'patchinko/constant'
+// or
+import O from 'patchinko/immutable'
+```
+
 In the browser:
 
 ```html
-<script src=//unpkg.com/patchinko/explicit></script>
+<script src=//unpkg.com/patchinko@4.0.0/src/explicit.mjs></script>
 <script>console.log({P, S, PS, D})</script>
 <!-- or -->
-<script src=//unpkg.com/patchinko/overloaded></script>
+<script src=//unpkg.com/patchinko@4.0.0/src/overloaded.mjs></script>
 <script>console.log({O})</script>
 <!-- or -->
-<script src=//unpkg.com/patchinko/immutable></script>
+<script src=//unpkg.com/patchinko@4.0.0/src/immutable.mjs></script>
 <script>console.log({O})</script>
 ```
 
-# How
+# How?
 
 Below is a kitchen sink straw man showing the full power of Patchinko in mutating complex Javascript objects.
 
@@ -161,10 +168,10 @@ Observe that:
 
 ***
 
-Using the overloaded API, the same results are achieved as follows:
+Using the overloaded constant API, the same results are achieved as follows:
 
 ```js
-const O = require('patchinko/overloaded')
+import O from 'patchinko/src/overloaded'
 
 O(thing, {
   foo: 'baz',
@@ -200,17 +207,17 @@ O(thing, {
 
 [1️] The single-API overload forbids the immutable `PS` overload because more than 1 argument will necessarily fork to `P`. Thus immutable nested structure patching with `O` requires 2 invocations, 1 forking to `S` and the 2nd to `P`.
 
-# Why
+# Why?
 
 Patchinko was originally written to help monkey-patch an incredibly unwieldy piece of legacy code written in abject-oriented style - [CKEDITOR](https://docs.ckeditor.com/#!/api) to be precise. The code in question consisted of large, obtuse and inflexible configurations and interlinked method references, which was difficult enough to interpret in the first place. By using Patchinko, the necessarily cumbersome patch ressembles the structure it seeks to patch with minimum ceremony, freeing up head space to consider the intricacies of the problem API rather than the mundane difficulty of patching correctly in the first place.
 
-# But
+# But...
 
 Monkey-patching is a recondite use case. Most applications of siginificant complexity will at some point face difficulties in state management. People argue the toss about the merits of mutability, different communication patterns, etc - in my opinion the key value of 'reducers', 'actions', 'lenses' etc is only really beneficial inasmuch as the ceremony of designing & writing such things distracts the brain from otherwise loose creativity, and limits the number of ways in which you might be tempted to interact with state, for the mundane reason that the more ways in which state can / is modified, the harder code is to reason about.
 
 Patchinko eases that burden by providing a declarative, recursive, function-oriented pattern with a simple & flexible API. Mutating state with Patchinko is safer because it provides an easy way to do so safely, without insisting on heavy-handed, exotic new concepts or obnoxious restrictions. Moreover, a Patchinko patch is isomorphic inasmuch as it resembles the object it patches - in stark contrast to reducers, actions & lenses where any given use instance has more in common with every other use instance than it does the transaction / data it represents.
 
-# Troubleshooting
+# Troubleshooting!
 
 Patchinko is very terse - almost gnomic. While this can make highly expressive application code easier to *read*, it can also sometimes be hard to write. The following aren't hard and fast rules - there are legitimate and inventive use cases hiding behind every piece of generic 'bad practice' - but people have been confused by falling into these traps before. As a *general* rule, if your Patchinko code isn't behaving as expected, try to eliminate the following:
 
@@ -277,6 +284,8 @@ O(x,   { foo: O({ bar: O(targetValue => {
 ```
 
 Bear in mind you can't return `P`, `PS`, or `D` operations from `S`. This is never a blocker, except in the case of `D`.
+
+***
 
 # Changelog
 
