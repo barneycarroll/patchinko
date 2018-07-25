@@ -1,6 +1,6 @@
 {
   "name": "patchinko",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "A concise tool for declarative object manipulation",
   "main": "src/index.js",
   "module": "src/index.mjs",

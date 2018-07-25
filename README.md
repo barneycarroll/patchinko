@@ -4,7 +4,7 @@ A tool for making deep & subtle mutations on - or modified copies of - Javascrip
 
 Throw your rose-tinted [lenses](https://medium.com/javascript-inside/an-introduction-into-lenses-in-javascript-e494948d1ea5), [reducers](http://redux.js.org/docs/basics/Reducers.html) & [decorators](https://tc39.github.io/proposal-decorators/) out the window: Patchinko is an ECMAScript3-compliant utility that makes complex patching fast and easy, without the ceremony.
 
-[What](#what) ([explicit](#explicit), [immutable](#immutable), [constant](#constant)); [Where](#where); [How](#how); [Why](#why) ([but](#but)); [Gotchas](#gotchas); [Changelog](#changelog).
+[What](#what) ([explicit](#explicit), [immutable](#1-immutable), [constant](#2-constant)); [Where](#where); [How](#how); [Why](#why) ([but](#but)); [Troubleshooting](#troubleshooting); [Changelog](#changelog).
 
 # What?
 
