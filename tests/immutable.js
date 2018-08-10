@@ -1,6 +1,9 @@
-const o = require('ospec')
+try {
+  var o = require('ospec')
 
-const O = require('../immutable.js')
+  var O = require('../immutable.js')
+}
+catch(e){}
 
 const I = x => x
 const A = f => x => f(x)

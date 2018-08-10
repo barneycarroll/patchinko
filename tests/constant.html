@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset=utf-8>
+
+    <title>
+      Patchinko test suite: constant.mjs
+    </title>
+
+    <script src=../node_modules/ospec/ospec.js></script>
+
+    <script>
+      const require = () => { throw '' }
+    </script>
+
+    <script type=module>
+      import('../constant.mjs').then(x => {
+        window.O = x.default
+
+        import('./constant.js').then(() => {
+          setTimeout(
+            () => {
+              o.run()
+
+              notice.innerHTML = 'Open the console for test results'
+            },
+            1000,
+          )
+        })
+      })
+    </script>
+  </head>
+
+  <body style=font-family:sans-serif>
+    <p>
+      <a href="./">./</a>
+    </p>
+
+    <h1>
+      Patchinko test suite: <code>constant.mjs</code>
+    </h1>
+
+    <p id=notice>Wait for it...</p>
+  </body>
+</html>

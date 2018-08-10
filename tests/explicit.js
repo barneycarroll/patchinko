@@ -1,6 +1,9 @@
-const o = require('ospec')
+try {
+  var o = require('ospec')
 
-const {P, S, PS, D} = require('../explicit.js')
+  var {P, S, PS, D} = require('../explicit.js')
+}
+catch(e){}
 
 const I = x => x
 const A = f => x => f(x)

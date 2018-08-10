@@ -5,9 +5,9 @@ A tool for making deep & subtle mutations on - or modified copies of - Javascrip
 Throw your rose-tinted [lenses](https://medium.com/javascript-inside/an-introduction-into-lenses-in-javascript-e494948d1ea5), [reducers](http://redux.js.org/docs/basics/Reducers.html) & [decorators](https://tc39.github.io/proposal-decorators/) out the window: Patchinko is an ECMAScript3-compliant utility that makes complex patching fast and easy, without the ceremony.
 
 * [What?](#what)
-  * API variations:
-    * [Explicit](#explicit)
-    * [Constant](#1-constant)
+  * [Explicit](#explicit) or
+  * [Overloaded](#explicit):
+    * [Constant](#1-constant) or
     * [Immutable](#2-immutable)
 * [Where?](#where)
 * [How?](#how)
@@ -21,15 +21,10 @@ Throw your rose-tinted [lenses](https://medium.com/javascript-inside/an-introduc
 
 Patchinko exposes 4 explicit APIs: `P`, `S`, `PS`, & `D`. In general it's easier to work with the overloaded APIs, but explicit is instructive in getting a clear mental model of the different granular operations Patchinko performs under the hood.
 
-`P` is like `Object.assign`: given `P(target, input1, input2, etc)`, it consumes inputs left to right and copies their properties onto the supplied target
-
-*…except that…*
-
-If any target properties are instances of `S(function)`, it will supply the scoped function with the target property for that key, and assign the result back to the target.
-
-If any target properties are `D`, it will delete the property of the same key on the target.
-
-`PS([ target, ] input)` is a composition of `P` & `S`, for when you need to patch recursively. If you supply a `target`, the original value will be left untouched (useful for immutable patching).
+* `P` is like `Object.assign`: given `P(target, input1, input2, etc)`, it consumes inputs left to right and copies their properties onto the supplied target, *except that:*
+* If any target properties are instances of `S(function)`, it will supply the scoped function with the target property for that key, and assign the result back to the target;
+* If any target properties are `D`, it will delete the property of the same key on the target;
+* `PS([ target, ] input)` is a composition of `P` & `S`, for when you need to patch recursively. If you supply a `target`, the original value will be left untouched (useful for immutable patching).
 
 ## Overloaded
 
@@ -37,10 +32,10 @@ Patchinko also comes with a don't-make-me-think single-reference overloaded API 
 
 `O` is an overloaded API that subsumes the above (with the exception of the n-ary immutable `PS` overload):
 
-1. No arguments stands in for `D`.
-2. A function argument stands in for `S`.
-3. A non-function single argument stands in for `PS`.
-4. …otherwise, `P`.
+* No arguments stands in for `D`
+* A function argument stands in for `S`
+* A non-function single argument stands in for `PS`
+* …otherwise, `P`
 
 The overloaded API comes in 2 flavours:
 
@@ -53,14 +48,14 @@ The 1st variation of the overloaded API assumes you want to mutate the `target`s
 The 2nd works on a more functional basis: the `target`s of each operation are left intact and any changes result in new objects being produced as the result of each operation. This is the immutable approach.
 
 > #### ☝️ Why does it matter?
-
+>
 > If you're using Patchinko to monkey-patch an arbitrary third party API, you almost certainly want to mutate it: complex APIs may use 'instanceof' and equality reference checks internally; if you're patching a class / prototypal construct with internal and external references across the code-base, you need to preserve those references in order for everything to work as expected.
-
+>
 > But if you're using Patchinko to make changes to a data structure that's the sole business of your application's data model, that kind of stuff shouldn't be necessary - you can and should certainly avoid those patterns (they're complex and brittle!). In this scenario, creating new objects instead of mutating old ones can make the development & debugging process significantly easier:
-
+>
 > * Because the result of each patch operation is a new entity, you can store the results as new references and compare them later on. This can be useful when you want to see how a model has changed step by step over the course of several operations.
 > * Because nested structures within the patched entity that *haven't* been individually patched will retain their old identity, you an use [memoization](https://en.wikipedia.org/wiki/Memoization) to avoid unnecessary reactive computations. Traditionally this has been touted as a method for reactive Javascript applications - in particular virtual DOM libraries like [Mithril](https://mithril.js.org/) - to increase performance by skipping wasteful recomputations; but the salient advantage of this functionality is for debugging - you can set breakpoints far downstream in an application call graph and only pause script execution if and when change has occured.
-
+>
 > *When it comes to any defensive 'best practice' for the sake of performance - in the absence of any qualifiable evidence - the ability for authors & readers to reason & interact with the code lucidly should always be more jusdged more important to the architecture of code than any theories about what the computer might prefer.*
 
 # Where?
@@ -71,19 +66,27 @@ In Node:
 
 ```js
 const {P, S, PS, D} = require('patchinko/explicit')
+
 // or
+
 const O = require('patchinko/constant')
+
 // or
+
 const O = require('patchinko/immutable')
 ```
 
 With ESM:
 
-```mjs
+```js
 import {P, S, PS, D} from 'patchinko/explicit'
+
 // or
+
 import O from 'patchinko/constant'
+
 // or
+
 import O from 'patchinko/immutable'
 ```
 
@@ -92,10 +95,14 @@ In the browser:
 ```html
 <script src=//unpkg.com/patchinko@4.1.0/explicit.mjs></script>
 <script>console.log({P, S, PS, D})</script>
+
 <!-- or -->
+
 <script src=//unpkg.com/patchinko@4.1.0/overloaded.mjs></script>
 <script>console.log({O})</script>
+
 <!-- or -->
+
 <script src=//unpkg.com/patchinko@4.1.0/immutable.mjs></script>
 <script>console.log({O})</script>
 ```
@@ -304,6 +311,7 @@ Bear in mind you can't return `P`, `PS`, or `D` operations from `S`. This is nev
   * ECMAScript modules
   * `overloaded` renamed to `constant`
   * All API variants exposed via entry point
+* Browser-based ESM tests (`.html` files in tests folder)
 * Refactor tests to avoid symbols (they're unnecessary and misleading)
 * Troubleshooting documentation (+ tweaks)
 * Updated dependencies (+ API compliance tweaks)

@@ -1,9 +1,13 @@
-const o = require('ospec')
+try {
+  var o = require('ospec')
 
-const O = require('../constant.js')
+  var O = require('../constant.js')
+}
+catch(e){}
 
 const I = x => x
 const A = f => x => f(x)
+
 
 o.spec('Mutable overload API: ', () => {
   o('`O` (with a single function argument)', () => {
