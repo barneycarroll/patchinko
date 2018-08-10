@@ -1,13 +1,13 @@
 const o = require('ospec')
 
-const O = require('../src/immutable.js')
+const O = require('../immutable.js')
 
 const I = x => x
 const A = f => x => f(x)
 
 o.spec('Immutable overload API: ', () => {
   o('`O` (with a single function argument)', () => {
-    const unique = Symbol('unicum')
+    const unique = {}
 
     o(
       O(I).apply(unique)
@@ -31,8 +31,8 @@ o.spec('Immutable overload API: ', () => {
 
     o.spec('is equivalent to an `Object.assign({}, target, ...inputs)` in the absence of any sub-properties', () => {
       const [factoryA, factoryB] = [
-        () => ({a: 'foo', b: 2, d: {bar:  'z'}, f: [3, 4]}),
-        () => ({a: 'baz', c: 3, d: {fizz: 'z'}, f: 'buzz'}),
+        () => ({ a: 'foo', b: 2, d: { bar:  'z' }, f: [3, 4] }),
+        () => ({ a: 'baz', c: 3, d: { fizz: 'z' }, f: 'buzz' }),
       ]
 
       o('does not preserve target identity', () => {
@@ -129,8 +129,8 @@ o.spec('Immutable overload API: ', () => {
 
       o.spec('containing objects', () => {
         o('performs a deep patch', () => {
-          const one = Symbol('one')
-          const two = Symbol('two')
+          const one = { a: 'one' }
+          const two = { a: 'two' }
 
           let interception
 
@@ -151,7 +151,7 @@ o.spec('Immutable overload API: ', () => {
             { a: { b: two } }
           )
 
-          o(interception).equals(one)
+          o(interception).deepEquals(one)
 
           o(
             O(

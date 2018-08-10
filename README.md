@@ -4,7 +4,16 @@ A tool for making deep & subtle mutations on - or modified copies of - Javascrip
 
 Throw your rose-tinted [lenses](https://medium.com/javascript-inside/an-introduction-into-lenses-in-javascript-e494948d1ea5), [reducers](http://redux.js.org/docs/basics/Reducers.html) & [decorators](https://tc39.github.io/proposal-decorators/) out the window: Patchinko is an ECMAScript3-compliant utility that makes complex patching fast and easy, without the ceremony.
 
-[What](#what) ([explicit](#explicit), [immutable](#1-immutable), [constant](#2-constant)); [Where](#where); [How](#how); [Why](#why) ([but](#but)); [Troubleshooting](#troubleshooting); [Changelog](#changelog).
+* [What?](#what)
+  * API variations:
+    * [Explicit](#explicit)
+    * [Constant](#1-constant)
+    * [Immutable](#2-immutable)
+* [Where?](#where)
+* [How?](#how)
+* [Why?](#why)
+* [Troubleshooting](#troubleshooting)
+* [Changelog](#changelog)
 
 # What?
 
@@ -43,20 +52,20 @@ The 1st variation of the overloaded API assumes you want to mutate the `target`s
 
 The 2nd works on a more functional basis: the `target`s of each operation are left intact and any changes result in new objects being produced as the result of each operation. This is the immutable approach.
 
-#### ☝️ Why does it matter?
+> #### ☝️ Why does it matter?
 
-If you're using Patchinko to monkey-patch an arbitrary third party API, you almost certainly want to mutate it: complex APIs may use 'instanceof' and equality reference checks internally; if you're patching a class / prototypal construct with internal and external references across the code-base, you need to preserve those references in order for everything to work as expected.
+> If you're using Patchinko to monkey-patch an arbitrary third party API, you almost certainly want to mutate it: complex APIs may use 'instanceof' and equality reference checks internally; if you're patching a class / prototypal construct with internal and external references across the code-base, you need to preserve those references in order for everything to work as expected.
 
-But if you're using Patchinko to make changes to a data structure that's the sole business of your application's data model, that kind of stuff shouldn't be necessary - you can and should certainly avoid those patterns (they're complex and brittle!). In this scenario, creating new objects instead of mutating old ones can make the development & debugging process significantly easier:
+> But if you're using Patchinko to make changes to a data structure that's the sole business of your application's data model, that kind of stuff shouldn't be necessary - you can and should certainly avoid those patterns (they're complex and brittle!). In this scenario, creating new objects instead of mutating old ones can make the development & debugging process significantly easier:
 
-* Because the result of each patch operation is a new entity, you can store the results as new references and compare them later on. This can be useful when you want to see how a model has changed step by step over the course of several operations.
-* Because nested structures within the patched entity that *haven't* been individually patched will retain their old identity, you an use [memoization](https://en.wikipedia.org/wiki/Memoization) to avoid unnecessary reactive computations. Traditionally this has been touted as a method for reactive Javascript applications - in particular virtual DOM libraries like [Mithril](https://mithril.js.org/) - to increase performance by skipping wasteful recomputations; but IMO the salient advantage of this functionality is for debugging - you can set breakpoints far downstream in an application call graph and only pause script execution if and when change has occured.
+> * Because the result of each patch operation is a new entity, you can store the results as new references and compare them later on. This can be useful when you want to see how a model has changed step by step over the course of several operations.
+> * Because nested structures within the patched entity that *haven't* been individually patched will retain their old identity, you an use [memoization](https://en.wikipedia.org/wiki/Memoization) to avoid unnecessary reactive computations. Traditionally this has been touted as a method for reactive Javascript applications - in particular virtual DOM libraries like [Mithril](https://mithril.js.org/) - to increase performance by skipping wasteful recomputations; but the salient advantage of this functionality is for debugging - you can set breakpoints far downstream in an application call graph and only pause script execution if and when change has occured.
 
-*As with all purported defensive 'best practices' in the name of performance - in the absence of any known quantities - the ability for the authors and readers of code to reason & interact with it lucidly should always be more pertinent in the architecture of code than notional theories of what the computer might prefer.*
+> *When it comes to any defensive 'best practice' for the sake of performance - in the absence of any qualifiable evidence - the ability for authors & readers to reason & interact with the code lucidly should always be more jusdged more important to the architecture of code than any theories about what the computer might prefer.*
 
 # Where?
 
-Supplied as ECMAScript modules (esm) or as script files with CommonJS module exports and unscoped top-level references. Available on [npm](https://npmjs.org/package/patchinko) & [UNPKG cdn](https://unpkg.com/patchinko). Patchinko's entry points import and export all APIs according to the environment module support: it is always preferable to explicitly reference the path of the desired API.
+Supplied as ECMAScript modules (ESM) with the `.mjs` extension, and as script files with CommonJS module exports and unscoped top-level references with `.js` extensions. Available on [NPM](https://npmjs.org/package/patchinko) & [UNPKG cdn](https://unpkg.com/patchinko). Patchinko's entry points `import` and `export` *all* APIs according to the environment module support: it is always preferable to explicitly reference the path of the desired API.
 
 In Node:
 
@@ -81,13 +90,13 @@ import O from 'patchinko/immutable'
 In the browser:
 
 ```html
-<script src=//unpkg.com/patchinko@4.0.0/src/explicit.mjs></script>
+<script src=//unpkg.com/patchinko@4.1.0/explicit.mjs></script>
 <script>console.log({P, S, PS, D})</script>
 <!-- or -->
-<script src=//unpkg.com/patchinko@4.0.0/src/overloaded.mjs></script>
+<script src=//unpkg.com/patchinko@4.1.0/overloaded.mjs></script>
 <script>console.log({O})</script>
 <!-- or -->
-<script src=//unpkg.com/patchinko@4.0.0/src/immutable.mjs></script>
+<script src=//unpkg.com/patchinko@4.1.0/immutable.mjs></script>
 <script>console.log({O})</script>
 ```
 
@@ -219,13 +228,13 @@ Patchinko eases that burden by providing a declarative, recursive, function-orie
 
 # Troubleshooting!
 
-Patchinko is very terse - almost gnomic. While this can make highly expressive application code easier to *read*, it can also sometimes be hard to write. The following aren't hard and fast rules - there are legitimate and inventive use cases hiding behind every piece of generic 'bad practice' - but people have been confused by falling into these traps before. As a *general* rule, if your Patchinko code isn't behaving as expected, try to eliminate the following:
+Patchinko is very terse - almost gnomic. While this can make highly expressive application code easier to read, it can also sometimes be hard to write. The following aren't hard and fast rules - there are legitimate and inventive use cases hiding behind every piece of generic 'bad practice' - but people have been confused by falling into these traps before. As a general rule, if your Patchinko code isn't behaving as expected, try to eliminate the following:
 
 ### Only use one of: explicit, constant or immutable in any pieces of shared code
 
 Patchinko offers a single NPM package with single entry points that expose *all* APIs - but you should avoid mixing the 3 APIs within the same call graph: because recursive Patchinko operations rely on `instanceof` checks, code written in one will not be recognised in the other. This will result in broken patched objects.
 
-When deeling with an ambiguous operation or getting to grips with Patchinko's different operations, it can be helpful to switch back and forth between the different APIs to better understand the mechanical distinctions – but this should be done piecemeal.
+When dealing with an ambiguous operation or getting to grips with Patchinko's different operations, it can be helpful to switch back and forth between the different APIs to better understand the mechanical distinctions – but this should be done piecemeal.
 
 ```js
 // Avoid:
@@ -246,7 +255,7 @@ O(x, { foo: O({ bar }) })
 
 ### Deeply recursive structures: how many times should I wrap with `O`?
 
-Overloaded Patchinko can make complicated simple and simple easy, but there are also times when you loose sight of precisely what it's doing. The rule of thumb is that every nested object declaration in a Patchinko expression should be recursively wrapped - unless you wish to replace that object completely.
+Overloaded Patchinko can make complicated simple and simple easy, but there are also times when you lose sight of precisely what it's doing. The rule of thumb is that every nested object declaration in a Patchinko expression should be recursively wrapped - unless you wish to replace that object completely.
 
 ```js
 // Correct:
@@ -267,7 +276,7 @@ O(x,   { foo: O({ bar: O({ bish: O('bash') }) }) } )
 
 ### Patchinko can't perform the kind of complex patch I need / I would really like to *sometimes* switch to explicit mode / How can I debug a nested patch operation?
 
-Use `S` or `O(function)`. If you generally want the power of Patchinko's simplicity but at a certain point want to 'break out' into plain imperative Javascript - either to do something irreducibly more complex than a procedural patch, or because results aren't what you're expecting (or you just want to tap out to `console.log` or `debugger`), you can always use the 'scope' operation to query the target value, run arbitrary code and / or return whatever you want.
+Use `S` or `O(function)`. If you generally want the power of Patchinko's simplicity but at a certain point want to 'break out' into plain imperative Javascript - either to do something irreducibly more complex than a procedural patch; or because results aren't what you're expecting (or you just want to tap out to `console.log` or `debugger`) - you can always use the 'scope' operation to query the target value, run arbitrary code and / or return whatever value you want.
 
 ```js
 O(x,   { foo: O({ bar: O(targetValue => {
@@ -289,10 +298,13 @@ Bear in mind you can't return `P`, `PS`, or `D` operations from `S`. This is nev
 
 # Changelog
 
-## 4.0.0
+## 4.1.0
 
-* **BREAKING** API change: deprecated 'overloaded' endpoint > now accessible via 'constant' endpoint
-* ECMAScript modules
+* **Breaking:** API refactor
+  * ECMAScript modules
+  * `overloaded` renamed to `constant`
+  * All API variants exposed via entry point
+* Refactor tests to avoid symbols (they're unnecessary and misleading)
 * Troubleshooting documentation (+ tweaks)
 * Updated dependencies (+ API compliance tweaks)
 

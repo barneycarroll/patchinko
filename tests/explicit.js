@@ -1,12 +1,12 @@
 const o = require('ospec')
 
-const {P, S, PS, D} = require('../src/explicit.js')
+const {P, S, PS, D} = require('../explicit.js')
 
 const I = x => x
 const A = f => x => f(x)
 
 o('`S`', () => {
-  const unique = Symbol('unicum')
+  const unique = {}
 
   o(
     S(I).apply(unique)
@@ -30,8 +30,8 @@ o.spec('`P`', () => {
 
   o.spec('is equivalent to `Object.assign` in the absence of any sub-properties', () => {
     const [factoryA, factoryB] = [
-      () => ({a: 'foo', b: 2, d: {bar:  'z'}, f: [3, 4]}),
-      () => ({a: 'baz', c: 3, d: {fizz: 'z'}, f: 'buzz'}),
+      () => ({ a: 'foo', b: 2, d: { bar:  'z' }, f: [3, 4] }),
+      () => ({ a: 'baz', c: 3, d: { fizz: 'z' }, f: 'buzz' }),
     ]
 
     o('preserves target identity', () => {
@@ -73,7 +73,7 @@ o.spec('`P`', () => {
 
   o.spec('with `S`', () => {
     o("supplies the target's property value to the scoped function", () => {
-      const unique = Symbol('unicum')
+      const unique = {}
 
       let interception
 
@@ -90,25 +90,25 @@ o.spec('`P`', () => {
     })
 
     o('assigns the product of any scoped closures to the target properties', () => {
-      const unique1 = Symbol('unicum1')
-      const unique2 = Symbol('unicum2')
+      const one = {}
+      const two = {}
 
       o(
         P(
-          { a: unique1 },
+          { a: one },
           { a: S(I) }
         ).a
       ).equals(
-        unique1
+        one
       )
 
       o(
         P(
-          { a: unique1 },
-          { a: S(() => unique2) }
+          { a: one },
+          { a: S(() => two) }
         ).a
       ).equals(
-        unique2
+        two
       )
     })
   })
@@ -129,8 +129,8 @@ o.spec('`P`', () => {
 
 o.spec('`PS`', () => {
   o('composes `P` with `S`, allowing recursion', () => {
-    const one = Symbol('one')
-    const two = Symbol('two')
+    const one = {}
+    const two = {}
 
     let interception
 
@@ -144,11 +144,10 @@ o.spec('`PS`', () => {
 
         {
           a: PS({
-            b: S(received => {
-              interception = received
-
-              return two
-            })
+            b: S(received => (
+              interception = received,
+              two
+            ))
           })
         }
       )

@@ -1,17 +1,17 @@
 {
   "name": "patchinko",
-  "version": "4.0.1",
+  "version": "4.1.0",
   "description": "A concise tool for declarative object manipulation",
-  "main": "src/index.js",
-  "module": "src/index.mjs",
+  "main": "index.js",
+  "module": "index.mjs",
   "repository": "git@github.com:barneycarroll/patchinko.git",
   "author": "Barney Carroll <barney.carroll@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "eslint": "5.2.0",
+    "eslint": "5.3.0",
     "ospec": "3.0.1"
   },
   "scripts": {
-    "test": "ospec && eslint src"
+    "test": "ospec && eslint ."
   }
 }
