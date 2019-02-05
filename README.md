@@ -24,7 +24,7 @@ Patchinko exposes 4 explicit APIs: `P`, `S`, `PS`, & `D`. In general it's easier
 * `P` is like `Object.assign`: given `P(target, input1, input2, etc)`, it consumes inputs left to right and copies their properties onto the supplied target, *except that:*
 * If any target properties are instances of `S(function)`, it will supply the scoped function with the target property for that key, and assign the result back to the target;
 * If any target properties are `D`, it will delete the property of the same key on the target;
-* `PS([ target, ] input)` is a composition of `P` & `S`, for when you need to patch recursively. If you supply a `target`, the original value will be left untouched (useful for immutable patching).
+* `PS(target?, input)` is a composition of `P` & `S`, for when you need to patch recursively. If you supply a `target`, the original value will be left untouched (useful for immutable patching).
 
 ## Overloaded
 
