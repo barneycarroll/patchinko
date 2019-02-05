@@ -65,29 +65,29 @@ Supplied as ECMAScript modules (ESM) with the `.mjs` extension, and as script fi
 In Node:
 
 ```js
-const {P, S, PS, D} = require('patchinko/explicit')
+const {P, S, PS, D} = require('patchinko/explicit.js')
 
 // or
 
-const O = require('patchinko/constant')
+const O = require('patchinko/constant.js')
 
 // or
 
-const O = require('patchinko/immutable')
+const O = require('patchinko/immutable.js')
 ```
 
 With ESM:
 
 ```js
-import {P, S, PS, D} from 'patchinko/explicit'
+import {P, S, PS, D} from 'patchinko/explicit.mjs'
 
 // or
 
-import O from 'patchinko/constant'
+import O from 'patchinko/constant.mjs'
 
 // or
 
-import O from 'patchinko/immutable'
+import O from 'patchinko/immutable.mjs'
 ```
 
 In the browser:
