@@ -23,7 +23,7 @@ export default function O(a, b){
             : a[key] =
             b[key] instanceof O
             ? b[key].apply(
-              typeof a[key] == 'object'
+              a[key] && typeof a[key] == 'object'
               ? copy(a[key])
               : a[key]
             )
