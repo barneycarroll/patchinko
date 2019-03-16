@@ -22,12 +22,12 @@ export default function O(a, b){
             ? delete a[key]
             : a[key] =
             b[key] instanceof O
-              ? b[key].apply(
-                typeof a[key] == 'object'
-                  ? copy(a[key])
-                  : a[key]
-              )
-              : b[key]
+            ? b[key].apply(
+              typeof a[key] == 'object'
+              ? copy(a[key])
+              : a[key]
+            )
+            : b[key]
 
     return a
   }

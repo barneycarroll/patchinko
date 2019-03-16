@@ -128,6 +128,15 @@ o.spec('Immutable overload API: ', () => {
             'bar'
           )
         })
+        
+
+        o('can replace `null` values on the target', () => {
+          o(
+            O({a: null}, {a: O(() => 'foo')})
+          ).deepEquals(
+            {a: 'foo'}
+          )
+        })
       })
 
       o.spec('containing objects', () => {
