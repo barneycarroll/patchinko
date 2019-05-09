@@ -1,12 +1,15 @@
-const o = require('ospec')
+try {
+  var o = require('ospec')
 
-const {P, S, PS, D, O} = require('../explicit.js')
+  var {P, S, PS, D} = require('../explicit.js')
+}
+catch(e){}
 
 const I = x => x
 const A = f => x => f(x)
 
 o('`S`', () => {
-  const unique = Symbol('unicum')
+  const unique = {}
 
   o(
     S(I).apply(unique)
@@ -25,35 +28,55 @@ o('`S`', () => {
 
 o.spec('`P`', () => {
   o('consumes a target object & an input object', () => {
-    o(P({}, {}))
+    P({}, {})
   })
 
-  o('is equivalent to `Object.assign` in the absence of `S`', () => {
+  o.spec('is equivalent to `Object.assign` in the absence of any sub-properties', () => {
     const [factoryA, factoryB] = [
-      () => ({a: 'foo', b: 2, d: {bar:  'z'}, f: [3, 4]}),
-      () => ({a: 'baz', c: 3, d: {fizz: 'z'}, f: 'buzz'}),
+      () => ({ a: 'foo', b: 2, d: { bar:  'z' }, f: [3, 4] }),
+      () => ({ a: 'baz', c: 3, d: { fizz: 'z' }, f: 'buzz' }),
     ]
 
-    const [a, b] = [factoryA(), factoryB()]
+    o('preserves target identity', () => {
+      const [a, b] = [factoryA(), factoryB()]
 
-    o(
-      P(a, b)
-    ).equals(
-      a
-    )
-      ('preserves target identity')
+      o(
+        P(a, b)
+      ).equals(
+        a
+      )
+    })
 
-    o(
-      P(factoryA(), factoryB())
-    ).deepEquals(
-      Object.assign(factoryA(), factoryB())
-    )
-      ('copies properties of input onto target')
+    o('copies properties of input onto target', () => {
+      o(
+        P(factoryA(), factoryB())
+      ).deepEquals(
+        Object.assign(factoryA(), factoryB())
+      )
+    })
+
+    o.spec('with the exception that', () => {
+      o('it will return the input directly if the target is null or undefined', () => {
+        const input = {}
+
+        o(
+          P(null, input)
+        ).equals(
+          input
+        )
+
+        o(
+          P(undefined, input)
+        ).equals(
+          input
+        )
+      })
+    })
   })
 
   o.spec('with `S`', () => {
     o("supplies the target's property value to the scoped function", () => {
-      const unique = Symbol('unicum')
+      const unique = {}
 
       let interception
 
@@ -70,25 +93,25 @@ o.spec('`P`', () => {
     })
 
     o('assigns the product of any scoped closures to the target properties', () => {
-      const unique1 = Symbol('unicum1')
-      const unique2 = Symbol('unicum2')
+      const one = {}
+      const two = {}
 
       o(
         P(
-          { a: unique1 },
+          { a: one },
           { a: S(I) }
         ).a
       ).equals(
-        unique1
+        one
       )
 
       o(
         P(
-          { a: unique1 },
-          { a: S(() => unique2) }
+          { a: one },
+          { a: S(() => two) }
         ).a
       ).equals(
-        unique2
+        two
       )
     })
   })
@@ -109,8 +132,8 @@ o.spec('`P`', () => {
 
 o.spec('`PS`', () => {
   o('composes `P` with `S`, allowing recursion', () => {
-    const one = Symbol('one')
-    const two = Symbol('two')
+    const one = {}
+    const two = {}
 
     let interception
 
@@ -124,11 +147,10 @@ o.spec('`PS`', () => {
 
         {
           a: PS({
-            b: S(received => {
-              interception = received
-
-              return two
-            })
+            b: S(received => (
+              interception = received,
+              two
+            ))
           })
         }
       )
@@ -163,100 +185,5 @@ o.spec('`PS`', () => {
         a: [1, 3]
       }
     )
-  })
-})
-
-o('`O` explicit (with a single function argument)', () => {
-  const unique = Symbol('unicum')
-
-  o(
-    O(I).apply(unique)
-  ).equals(
-    A(I)(unique)
-  )
-    ('is equivalent to an applicative combinator')
-})
-
-o.spec('`O` explicit (with 2 or more arguments)', () => {
-  o('consumes a target object & an input object', () => {
-    o(O({}, {}))
-  })
-
-  o('is equivalent to `Object.assign` in the absence of any sub-properties', () => {
-    const [factoryA, factoryB] = [
-      () => ({a: 'foo', b: 2, d: {bar:  'z'}, f: [3, 4]}),
-      () => ({a: 'baz', c: 3, d: {fizz: 'z'}, f: 'buzz'}),
-    ]
-
-    const [a, b] = [factoryA(), factoryB()]
-
-    o(
-      O(a, b)
-    ).equals(
-      a
-    )
-      ('preserves target identity')
-
-    o(
-      O(factoryA(), factoryB())
-    ).deepEquals(
-      Object.assign({}, factoryA(), factoryB())
-    )
-      ('copies properties of input onto target')
-  })
-
-  o.spec('with nested (single-function-consuming) `O` properties', () => {
-    o("supplies the target's property value to the scoped function", () => {
-      const unique = Symbol('unicum')
-
-      let interception
-
-      O(
-        { a: unique },
-        {
-          a: O(received => {
-            interception = received
-          })
-        }
-      )
-
-      o(interception).equals(unique);
-    });
-
-    o('assigns the product of any scoped closures to the target properties', () => {
-      const unique1 = Symbol('unicum1')
-      const unique2 = Symbol('unicum2')
-
-      o(
-        O(
-          { a: unique1 },
-          { a: O(I) }
-        ).a
-      ).equals(
-        unique1
-      )
-
-      o(
-        O(
-          { a: unique1 },
-          { a: O(() => unique2) }
-        ).a
-      ).equals(
-        unique2
-      )
-    })
-  })
-
-  o.spec('with `O` (supplied as a property value)', () => {
-    o('deletes the target property with the same key', () => {
-      o(
-        O(
-          { a: 1, b: 2 },
-          { a: O }
-        )
-      ).deepEquals(
-        { b: 2 }
-      )
-    })
   })
 })

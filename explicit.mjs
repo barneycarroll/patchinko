@@ -36,6 +36,4 @@ function PS(target, input){
 
 function D(){}
 
-try {
-  module.exports = {P: P, S: S, PS: PS, D: D}
-} catch(e) {}
+export {P, S, PS, D}

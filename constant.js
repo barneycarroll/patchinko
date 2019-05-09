@@ -1,13 +1,3 @@
-function copy(x){
-  var y = new x.constructor
-
-  for(var z in x)
-    if(x.hasOwnProperty(z))
-      y[z] = x[z]
-
-  return y
-}
-
 function O(a, b){
   if(arguments.length == 1)
     if(this instanceof O)
@@ -23,8 +13,6 @@ function O(a, b){
     return arguments.length > 2 ? O.call.apply(O, arguments) : b
 
   else {
-    a = copy(a)
-
     for(var i = 1; i < arguments.length; i++, b = arguments[i])
       for(var key in b)
         if(b.hasOwnProperty(key))
@@ -32,11 +20,7 @@ function O(a, b){
           ? delete a[key]
           : a[key] =
             b[key] instanceof O
-            ? b[key].apply(
-              a[key] && typeof a[key] == 'object'
-              ? copy(a[key])
-              : a[key]
-            )
+            ? b[key].apply(a[key])
             : b[key]
 
     return a
