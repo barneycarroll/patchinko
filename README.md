@@ -24,6 +24,7 @@ Patchinko exposes 4 explicit APIs: `P`, `S`, `PS`, & `D`. In general it's easier
 * `P` is like `Object.assign`: given `P(target, input1, input2, etc)`, it consumes inputs left to right and copies their properties onto the supplied target, *except that:*
 * If any target properties are instances of `S(function)`, it will supply the scoped function with the target property for that key, and assign the result back to the target;
 * If any target properties are `D`, it will delete the property of the same key on the target;
+* If any of patches are a function, it applies the function to the target;
 * `PS(target?, input)` is a composition of `P` & `S`, for when you need to patch recursively. If you supply a `target`, the original value will be left untouched (useful for immutable patching).
 
 ## Overloaded
@@ -56,7 +57,7 @@ The 2nd works on a more functional basis: the `target`s of each operation are le
 > * Because the result of each patch operation is a new entity, you can store the results as new references and compare them later on. This can be useful when you want to see how a model has changed step by step over the course of several operations.
 > * Because nested structures within the patched entity that *haven't* been individually patched will retain their old identity, you an use [memoization](https://en.wikipedia.org/wiki/Memoization) to avoid unnecessary reactive computations. Traditionally this has been touted as a method for reactive Javascript applications - in particular virtual DOM libraries like [Mithril](https://mithril.js.org/) - to increase performance by skipping wasteful recomputations; but the salient advantage of this functionality is for debugging - you can set breakpoints far downstream in an application call graph and only pause script execution if and when change has occured.
 >
-> *When it comes to any defensive 'best practice' for the sake of performance - in the absence of any qualifiable evidence - the ability for authors & readers to reason & interact with the code lucidly should always be more jusdged more important to the architecture of code than any theories about what the computer might prefer.*
+> *When it comes to any defensive 'best practice' for the sake of performance - in the absence of any qualifiable evidence - the ability for authors & readers to reason & interact with the code lucidly should always be judged more important to the architecture of code than any theories about what the computer might prefer.*
 
 # Where?
 
@@ -111,7 +112,7 @@ In the browser:
 
 Below is a kitchen sink straw man showing the full power of Patchinko in mutating complex Javascript objects.
 
-For a holistic guide to using Patchinko as a tool for state management, please refer to [this excellent article on the Meiosis website](http://meiosis.js.org/wiki/03-Model-and-Nesting-C-Patchinko.html).
+For a holistic guide to using Patchinko as a tool for state management, please refer to [this excellent article on the Meiosis website](http://meiosis.js.org/tutorial/05-meiosis-with-patchinko.html).
 
 ```js
 // Some arbitrary structure
@@ -136,7 +137,11 @@ const thing = {
       structure: ['lol']
     },
     with: ['a', 'list', 'tacked', 'on']
-  }
+  },
+
+  a: 1,
+
+  b: 2
 }
 
 // A deep patch
@@ -170,6 +175,11 @@ P(thing, {
       {1: 'copy'}
     ) // ['a', 'copy', 'tacked', 'on'] - the original array is left untouched
   })
+}, target => {
+  // Change one top-level property depending on another
+  if (a > 0)
+    target.b++
+  return target
 })
 ```
 
@@ -218,6 +228,11 @@ O(thing, {
       O([], structure, {1: 'copy'}) // [1]
     )
   })
+}, target => {
+  // Change one top-level property depending on another
+  if (a > 0)
+    target.b++
+  return target
 })
 ```
 
@@ -300,6 +315,15 @@ O(x,   { foo: O({ bar: O(targetValue => {
 ```
 
 Bear in mind you can't return `P`, `PS`, or `D` operations from `S`. This is never a blocker, except in the case of `D`.
+
+In the case where you want to use `S` or `O(function)` on the whole target object instead of one of its properties, use a function as a patch. For example, you can use this to check one top-level property and conditionally change another property. You can also write a function that combines an array of patches into a single patch:
+
+```js
+const combinePatches = patches => obj =>
+  patches.reduce((target, patch) => O(target, patch), obj)
+```
+
+Then you can write `O(target, combinePatches[patch1, patch2, ...])`.
 
 ***
 
