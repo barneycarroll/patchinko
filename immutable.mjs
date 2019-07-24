@@ -35,11 +35,7 @@ export default function O(a, b){
             ? delete a[key]
             : a[key] =
               b[key] instanceof O
-              ? b[key].apply(
-                a[key] && typeof a[key] == 'object'
-                ? copy(a[key])
-                : a[key]
-              )
+              ? b[key].apply(a[key])
               : b[key]
 
     return a

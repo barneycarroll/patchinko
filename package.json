@@ -8,6 +8,7 @@
   "author": "Barney Carroll <barney.carroll@gmail.com>",
   "license": "MIT",
   "devDependencies": {
+    "dts-gen": "^0.5.7",
     "eslint": "^5.15.1",
     "ospec": "3.0.1"
   },
