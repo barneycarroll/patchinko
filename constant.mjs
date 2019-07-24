@@ -14,14 +14,17 @@ export default function O(a, b){
 
   else {
     for(var i = 1; i < arguments.length; i++, b = arguments[i])
-      for(var key in b)
-        if(b.hasOwnProperty(key))
-          b[key] == O
-          ? delete a[key]
-          : a[key] =
-            b[key] instanceof O
-            ? b[key].apply(a[key])
-            : b[key]
+      if (typeof b == 'function')
+        a = b(a)
+      else
+        for(var key in b)
+          if(b.hasOwnProperty(key))
+            b[key] == O
+            ? delete a[key]
+            : a[key] =
+              b[key] instanceof O
+              ? b[key].apply(a[key])
+              : b[key]
 
     return a
   }

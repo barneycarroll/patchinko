@@ -171,5 +171,36 @@ o.spec('Mutable overload API: ', () => {
         )
       })
     })
+
+    o.spec('with a function supplied as a patch', () => {
+      o('calls the function with the target object', () => {
+        o(
+          O(
+            { a: 2, b: 4 },
+            target => {
+              if (target.a > 0)
+                target.b *= 2
+
+              return target
+            },
+            { a: O(x => x + 1) }
+          )
+        ).deepEquals(
+          { a: 3, b: 8 }
+        )
+
+        const combinePatches = patches => obj =>
+          patches.reduce((target, patch) => O(target, patch), obj)
+
+        o(
+          O(
+            { a: 1, b: 2 },
+            combinePatches([{ a: O(x => x + 1) }, { b: O(x => x * 2 ) }])
+          )
+        ).deepEquals(
+          { a: 2, b: 4 }
+        )
+      })
+    })
   })
 })

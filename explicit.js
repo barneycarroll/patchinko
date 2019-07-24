@@ -3,14 +3,17 @@ function P(target){
     return P.call.apply(P, arguments)
 
   for(var i = 1; i < arguments.length; i++)
-    for(var key in arguments[i])
-      if(arguments[i].hasOwnProperty(key))
-        (arguments[i][key] === D)
-        ? delete target[key]
-        : target[key] =
-          arguments[i][key] instanceof S
-          ? arguments[i][key].apply(target[key])
-          : arguments[i][key]
+    if (typeof arguments[i] == 'function')
+      target = arguments[i](target)
+    else
+      for(var key in arguments[i])
+        if(arguments[i].hasOwnProperty(key))
+          (arguments[i][key] === D)
+          ? delete target[key]
+          : target[key] =
+            arguments[i][key] instanceof S
+            ? arguments[i][key].apply(target[key])
+            : arguments[i][key]
 
   return target
 }
