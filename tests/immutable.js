@@ -78,22 +78,7 @@ o.spec('Immutable overload API: ', () => {
     o.spec('with nested `O` invocations', () => {
       o.spec('containing a single function', () => {
         o("supplies the target's property value to the scoped function", () => {
-          let interception
-
-          O(
-            { a: 'primitive' },
-            {
-              a: O(received => {
-                interception = received
-              })
-            }
-          )
-
-          o(interception).equals('primitive');
-        })
-
-        o("clones the target's property value for the scoped function", () => {
-          const unique = {a: 'foo'}
+          const unique = {}
 
           let interception
 
@@ -106,7 +91,7 @@ o.spec('Immutable overload API: ', () => {
             }
           )
 
-          o(interception).notEquals(unique);
+          o(interception).equals(unique);
         })
 
         o('assigns the product of any scoped closures to the target properties', () => {

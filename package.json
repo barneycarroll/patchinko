@@ -1,6 +1,6 @@
 {
   "name": "patchinko",
-  "version": "4.1.0",
+  "version": "4.2.0",
   "description": "A concise tool for declarative object manipulation",
   "main": "index.js",
   "module": "index.mjs",
@@ -8,6 +8,7 @@
   "author": "Barney Carroll <barney.carroll@gmail.com>",
   "license": "MIT",
   "devDependencies": {
+    "dts-gen": "^0.5.7",
     "eslint": "^5.15.1",
     "ospec": "3.0.1"
   },

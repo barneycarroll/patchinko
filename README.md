@@ -305,6 +305,10 @@ Bear in mind you can't return `P`, `PS`, or `D` operations from `S`. This is nev
 
 # Changelog
 
+## 4.2.0
+
+**Breaking:** Immutable scopes no longer attempt to copy non-primitive values - immutable scope is thus identical to constant & explicit scope (supplying the original value) - this sidesteps the bug of not being able to succinctly procedurally clone some types of object (Map, Set), but puts the onus on the author to clone the value manually if desired. [#23][i1] 
+
 ## 4.1.0
 
 * **Breaking:** API refactor
@@ -341,3 +345,5 @@ Mutable & immutable single function `O` API via `/overloaded.js` & `/immutable.j
 ## ^1.0.0
 
 Patchinko published with explicit API of `{patch, scope, ps}`
+
+[i1]: https://github.com/barneycarroll/patchinko/issues/23
