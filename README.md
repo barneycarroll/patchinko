@@ -56,7 +56,7 @@ The 2nd works on a more functional basis: the `target`s of each operation are le
 > * Because the result of each patch operation is a new entity, you can store the results as new references and compare them later on. This can be useful when you want to see how a model has changed step by step over the course of several operations.
 > * Because nested structures within the patched entity that *haven't* been individually patched will retain their old identity, you an use [memoization](https://en.wikipedia.org/wiki/Memoization) to avoid unnecessary reactive computations. Traditionally this has been touted as a method for reactive Javascript applications - in particular virtual DOM libraries like [Mithril](https://mithril.js.org/) - to increase performance by skipping wasteful recomputations; but the salient advantage of this functionality is for debugging - you can set breakpoints far downstream in an application call graph and only pause script execution if and when change has occured.
 >
-> *When it comes to any defensive 'best practice' for the sake of performance - in the absence of any qualifiable evidence - the ability for authors & readers to reason & interact with the code lucidly should always be more jusdged more important to the architecture of code than any theories about what the computer might prefer.*
+> *When it comes to any defensive 'best practice' for the sake of performance - in the absence of any qualifiable evidence - the ability for authors & readers to reason & interact with the code lucidly should always be judged more important to the architecture of code than any theories about what the computer might prefer.*
 
 # Where?
 
