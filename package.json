@@ -4,15 +4,22 @@
   "description": "A concise tool for declarative object manipulation",
   "main": "index.js",
   "module": "index.mjs",
+  "types": "types/patchinko/index.d.ts",
   "repository": "git@github.com:barneycarroll/patchinko.git",
   "author": "Barney Carroll <barney.carroll@gmail.com>",
   "license": "MIT",
   "devDependencies": {
+    "conditional-type-checks": "^1.0.5",
     "dts-gen": "^0.5.7",
     "eslint": "^5.15.1",
     "ospec": "3.0.1"
   },
   "scripts": {
-    "test": "ospec && eslint ."
+    "test": "npm run test:lint . && npm run test:ts",
+    "test:lint": "ospec && eslint",
+    "test:ts": "dtslint types/patchinko"
+  },
+  "dependencies": {
+    "dtslint": "^2.0.5"
   }
 }
