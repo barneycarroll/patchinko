@@ -187,7 +187,7 @@ Observe that:
 Using the overloaded constant API, the same results are achieved as follows:
 
 ```js
-import O from 'patchinko/src/overloaded'
+import O from 'patchinko/overloaded.js'
 
 O(thing, {
   foo: 'baz',
@@ -307,7 +307,7 @@ Bear in mind you can't return `P`, `PS`, or `D` operations from `S`. This is nev
 
 ## 4.2.0
 
-**Breaking:** Immutable scopes no longer attempt to copy non-primitive values - immutable scope is thus identical to constant & explicit scope (supplying the original value) - this sidesteps the bug of not being able to succinctly procedurally clone some types of object (Map, Set), but puts the onus on the author to clone the value manually if desired. [#23][i1] 
+**Breaking:** Immutable scopes no longer attempt to copy non-primitive values - immutable scope is thus identical to constant & explicit scope (supplying the original value) - this sidesteps the bug of not being able to succinctly procedurally clone some types of object (Map, Set), but puts the onus on the author to clone the value manually if desired. [#23][i1]
 
 ## 4.1.0
 
